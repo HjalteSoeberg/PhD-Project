@@ -7,3 +7,8 @@ Research Topics
 Interresting Theoretical Topics
 - point processes
 - randomforrest and neural network
+
+
+Books and Articles
+- Causal Inference: what if - Hernan and Robins
+- Asymptotic Statistics - A. W. van der Vaart
