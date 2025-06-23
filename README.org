@@ -1,2 +1,61 @@
-# PhD-Project
-Github for my PhD project
+* PhD Project 
+
+Here we exchange references, ideas, codes and work in progress.
+
+** DP-next
+
+This project is funded under work package 2 of a grant called DP-next
+where 3 PhD students and a post-hoc are employed. Link to githup
+repository of work package 2:
+
+https://github.com/dp-next/WP2-Risk-Prediction
+
+** TODO Preparation of a PhD plan
+
+** Highlevel aims
+
+1. To write 3 research papers about statistical methods that are
+   clearly motivated by real world problems. 
+2. To learn a lot.
+3. To keep the spirits up.
+   
+** Research topics
+
+*** Real world problems
+
+The DP-next WP2 introduction motivates a clear target: new innovative
+intervention methods using real time monitoring and the use of
+smartphone apps. Evidence based input for these methods should come
+from a risk prediction algorithm which is based on electronic medical
+records. 
+
+*** Statistical problem
+
+The making of a model that predicts individualized risks requires
+careful consideration of the actual application of the model:
+
+- Who is eligible to use the model (target population?)
+- When will the model be applied (time zero?)
+- Which predictor variables are available through the register data
+  and also at the time where the model is applied (variable
+  selection?)
+- What is the model's intended use?
+   + inform a person and guide a personal decision 
+   + inform the health authorities about the diabetes risk in the population 
+   + inform the planners of an intervention about high risk subgroups of the population
+- Temporal updating and regional transportability 
+
+*** Statistical topics, related research and background reading
+
+- From parametric models to machine learning (see [[https://www.routledge.com/Medical-Risk-Prediction-Models-With-Ties-to-Machine-Learning/Gerds-Kattan/p/book/9780367673734?srsltid=AfmBOooB16Dnm5-gUfJFdOuVFLhXUrkZBIVH4d4UxUNwl_DWig7lYW-Q][Gerds & Kattan]],
+  chapter 8).
+- Splines and group penalization (https://cran.r-project.org/web/packages/mgcv/index.html)
+- Cross-validation:
+  + [[https://projecteuclid.org/journals/statistics-surveys/volume-4/issue-none/A-survey-of-cross-validation-procedures-for-model-selection/10.1214/09-SS054.full][Sylvain Arlot and Alain Celisse. A survey of cross-validation procedures for model selection. 2010.]]
+  + [[https://www.jstor.org/stable/2965703][Efron and Tibshirani (1997)]]
+- Super learning see https://arxiv.org/abs/2405.17259 and references therein.
+- From ATE (see e.g., [[https://www.jstor.org/stable/25791992]]) to CATE (see [[https://www.tandfonline.com/doi/full/10.1080/07350015.2014.975555][Jason Abrevaya, Yu-Chin Hsu& Robert P. Lieli]] and references thereof, i.e., do a cited ref search)
+- HAL https://academic.oup.com/biometrics/article/76/1/109/7425745
+
+
+
