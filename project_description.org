@@ -1,0 +1,181 @@
+#+bibliography: bibliography.bib
+
+* DP-next
+My PhD project is done as part of a larger project called DP-next. DP-Next is a project aimed at
+developing a sustainably effective strategy for prevention of Type 2 Diabetes in Denmark, Greenland
+and the Faroe Islands. The project has been funded by a Steno National Collaborative Grant from the
+Novo Nordisk Foundation and the full name of the
+project is: Sustainable Type 2 Diabetes Prevention for the 21st Century. The project is called DP-Next
+because we intend to develop the next generation of Diabetes Prevention strategies.
+
+** What will DP-Next do?
+The DP-Next project consists of four work packages:
+
+- WP1 (Management and Collaboration) will manage the project and foster deep collaboration between all
+   partners.
+- WP2 (Risk Prediction) will develop an exclusively register-based diabetes risk prediction model for
+  the entire Danish, Greenlandic and Faroese populations, applying advanced statistical and machine
+  learning approaches on a wide set of risk indicators. It will map out meaningful subgroups and
+  validate internally and in external populations.
+- WP3 (Heterogeneity) will map out heterogeneity in T2D risk in a new deeply phenotyped cohort of 1000
+  participants with HbA1c-based pre-diabetes with a core protocol focused on regional fat distribution,
+   hepatic steatosis, beta cell function and insulin resistance plus the creation of an extensive
+   biobank and the ambition for an extended protocol.
+- WP4 (Intervention Development) will develop an intervention for sustainable primary diabetes
+  prevention based on co-creation, a “Participatory System Dynamics Approach” and the “Complex
+  Interventions” framework and evaluate the pragmatic feasibility of intervention components in
+  specific risk subgroups in real life practical settings.
+
+My PhD project falls under WP2 of the DP-Next project.
+
+* WP2
+It is well known that type 2 diabetes (T2D) in trial settings can be prevented in high-risk individuals
+through intensive lifestyle modifications. However, translating these findings into sustainable,
+real-world practices has proved difficult. The original interventions were too resource-intensive for
+large-scale use, while less intensive approaches only produced temporary weight loss without long-term
+diabetes prevention. Additionally, many of the highest at-risk groups are rarely identified in routine
+care, and participation in health promoting programs among these groups has declined. Despite these
+challenges, new opportunities for diabetes prevention have emerged, including advanced health data
+systems, machine learning, better understanding of behavior change, innovative intervention methods,
+real-time monitoring technologies, and widespread use of apps and smartphones. These resources remain
+underutilized but hold great potential to improve prevention strategies.
+
+** Aim
+The aim of WP2 is to develop an operational risk model that calculates an individual diabetes risk
+prediction for the entire population of Denmark, Greenland and the Faroe Islands. We will achieve this
+by designing a risk prediction algorithm based exclusively on existing register-based data. WP2 will
+have a duration of 3 years (Years 1 to 3 of the project) and includes partners from all 7 Steno Centres.
+
+** General Objectives
+WP2 has objectives at the level of:
+1. The total population
+2. Population subgroups
+3. Individuals
+4. The Health system
+
+In Denmark, the first two sets of objectives will be executed based on register data (DST environment),
+while the third and fourth sets will require transfer of models and working environments to operational
+electronic medical record (EMR) databases in at least one Danish Region. Data analysis in Greenland and
+the Faroe Islands will be carried out in parallel, in separate data environments using data from the
+local EMR systems. Components and partial models may be transferred between the three participating
+countries.
+
+*** Total Population level
+Descriptive epidemiology of diabetes and diabetes risk: Once a suitable risk prediction model has been
+established, the objective is to use it to describe the state and temporal development of diabetes risk
+in Denmark, Greenland and the Faroe Islands. This analysis can include subdivisions at the level of
+regions/municipalities. It can furthermore include an analysis of the relative contribution of broad
+groups of risk factors to the state and trends in diabetes risk. Once the analysis protocol for this
+descriptive aim has been fully developed, applied and published in a peer-reviewed journal, updated
+analyses can be calculated on a yearly basis and the results can be made public as updates on the
+DP-Next project website.
+
+*** Population subgroups
+Within each of the three target countries, the risk prediction model will be used for the
+identification of subgroups at high diabetes risk. The objective is to identify among individuals
+with high diabetes risk groups of people with different clustered combinations of contributing risk
+indicators. In a hypothetical example, women aged over 50 with two first-degree relatives with diabetes
+may have a an equivalent absolute diabetes risk to non-participants in national screening programs with
+low socio-economic status or to men aged over 55 with a history of cardiovascular disease; However,
+these would constitute three different high risk subgroups. The subgroup analysis will define these
+subgroups based on a data-driven approaches which may include cluster-analysis type methods to assign
+individuals to mutually exclusive risk groups, decision-tree based methods that prioritize maximally
+informative variables and apply these in nested sequences, or dimensionality reduction methods such as
+principal component analyses that map all individuals along a reduced set of orthogonal risk axes.
+The output of these analyses will serve as input to DP-Next WP 4, by defining high risk subgroups
+that can be defined operationally with relative ease. One or two of these subgroups will form the
+target populations for the process of participative intervention development described in WP4
+
+*** Individuals
+In Denmark, based on matching data availability between the DST and EMR data environments, a suitable
+model from the population focused analyses will be selected for transfer to the EMR environment
+(e.g. family history or SES data may not be available in the EMR environment). The prediction model
+will be transferred and its performance will be validated in a closed, older extract of data
+(e.g. with a 5-year follow-up horizon for incident diabetes). Subsequently, the added predictive
+value of a restricted set of additional variables that may be available in the EMR but not the DST
+environment will be assessed (e.g. BMI). Analyses will focus on quantifying the predicted risk of
+diabetes from the point of view of an individual and their physician. This means that beside the
+over-all risk estimate, an individual breakdown of the proportion of that risk explained by the
+various risk indicators should be calculated; subdivided by modifiable and unmodifiable risk factors.
+This may require a re-analysis based on an underlying aetiological model rather than a simply
+predictive model, in order to allow estimates to be used in counterfactual scenarios used in planning
+a clinical course of action. E.g: Your calculated 5-year risk is currently 6%. If we manage to reduce
+your weight by 2kg and your HbA1c by 1 mmol/mol, your risk would be reduced to 5%.
+
+*** The Health System
+After validation of the individual EMR based models, predicted diabetes risk estimates will be
+calculated based on the most up-to-date data for individuals attending a few selected clinical
+settings (e.g. a few selected GP practices) in order to evaluate how individuals and health care
+practitioners understand and interpret the data and to make an initial assessment of how these
+individual risk estimates may be incorporated into the day to day data flow of a practice. Finally,
+the possibilities for integrating the individual-level predicted risk data into the SAMBLIK system
+will be explored and piloted.
+
+** Data
+The model will be developed using synthetic data following the structure of the Danish register-data. All analyses will be conducted on a DST project database and transferred/validated in both real Danish register data, and in Greenlandic and Faroese data. Using register data available on DST, the type 2 diabetes outcome will be defined according to a previously validated classification [cite:@isaksen2023validation]. The analyses using Danish register data will be conducted on the DST project databyase at Steno Diabetes Center Aarhus, incorporating a wide range of data sources for model development, including the Danish Diabetes Database and several other health and socio-demographic registers.
+
+A unique feature of the Greenlandic and Faroese data is that all general practice and hospital EMR data can be used for research purposes. A range of clinical data not available in the Danish registers is available in Greenland and the Faroe Islands (e.g., BMI in Greenland is registered in the EMR for \~70% of the population, and \~60% have HbA1c and blood pressure registration).
+
+For legal and data protection reasons, the population health registers from Greenland and the Faroe Islands cannot be transferred and merged with each other or with Danish data, making it impossible to develop a model on joint data. Models will thus need to be developed in parallel in the three data environments, with transfer of partial (components of) models.
+
+The Danish registers will be accessed via a project hosted under the SDCA project database. SDCA will take the responsibility for the setup and general management of this project and will provide researchers from the other Danish institutions access.
+
+The Greenlandic and Faroese registers will be accessed via the local register data infrastructures by the researchers attached to those institutions. As the Greenlandic and Faroese registers are clinically more comprehensive than Danish registers, prediction (sub)models transferred from Denmark will be expanded locally to take into account additionally available data.
+
+Diabetes in Greenland has a larger genetic component, and the impact of other factors may also differ between Denmark and Greenland. Prediction (sub)models transferred to Greenland and the Faroe Islands may thus require modification and adaptation to account for risk factors unique for each of the two countries and for risk indicators not available in the Danish registers.
+
+*** Danish registers
+- CPR Register [1968-]
+- LPR (Danish National Patient Registry) [1977-]
+- LMDB (Danish National Prescription Registry) and the Hospital Medication Register [1995-]
+- Register of Laboratory Results for Research [2011/2015Q4-]
+- Cancer Register [1987-]
+- Pathology Register [1997-]
+- Diabase (RKKP) [2013-]
+- RKKP (Danish Registry of Diabetes) [2022Q3-]
+- Health Insurance [1990-]
+- Medical Birth Register [1973-]
+- DREAM database [1991-/2008-]
+- HANDIC Register [2013-/2018-]
+- FAIK/register of incomes [1990-]
+- Vaccination Register [2013-/2016-]
+
+
+** Work flow
+We will build upon our own methodology framework, experience and paradigms for making medical risk prediction models [cite:@vistisen2016prediction], [cite:@wright2021] [cite:@gerds2021medical], [cite:@liu2024predicting]. We will develop a lego system of learners (parametric models and machine 
+learning) which provides a super learner algorithm [cite:@super] for prediction. The super learner algorithm can be applied to (a subset of) the current data. It uses nested cross-validation to return the best risk prediction model according to current constraints and outperforms all benchmark models.
+
+* My Project
+My project aims to develop and adapt statistical methodology to create the risk prediction model for the danish population described in WP2 of the DP-Next project, such that the model has the following features:
+
+- Exclusively use register-based data such that the prediction model can be calculated for the entire population of Denmark, without the need to ask individuals for additional information.
+- Is designed for yearly updates based on newly available / updated risk indicator data.
+- Can cope with varying levels of data availability in the population (informative missingness)
+- Can incorporate longitudinal data (risk factor trajectories)
+- Can incorporate (time-updatable) risk indicators from family members
+
+In addition to building the risk prediction model, I also aim to identify the population subgroups with
+high diabetes risk, which will be used for WP4 of the DP-next project.\\
+\\
+To achieve these two goals for the DP-next project, my PhD will have the following three subprojects.
+
+** Project 1: Identifying the highest risk sub-groups in a population given a risk prediction model.
+This project will aim to extend current methodology in sub-group analysis to identify population subgroups with a high risk, using an existing risk prediction model. One current method in the field is  [cite:@guo2023], who finds the highest risk sub-group by pre-specifying either two or six sub-groups, fitting a logistic regression model and then using a bootstrap inspired algorithm. This method attains a low biased estimate with tight confidence intervals. This framework needs to be extended such that it can identify multiple high risk sub-groups among any number of sub-groups and use an already fitted risk prediction model instead of fitting a logistic regression model. Another method is shown in [cite:@parikh2021], which uses an existing risk prediction model and clustering methods on the covariates to indentify subgroups of high-risk. Clustering methods are however very sensitive and may not be suitable for our registry data due to size [cite:@wani2024], so a different method needs to be considered to identify the subgroups.\\
+The methodology developed in this project will be used to identify the sub-groups in the danish population with the highest risk of developing type 2 diabetes.
+
+** Project 2: Constrained risk prediction
+It is a common issue in risk prediction models that rely on estimating the cause-specific hazard or
+the cause-specific cumulative incidence function (CIF), that the total probability of events can sum
+to more than 1 [cite:@fine]. This issue has already been investigated and a possible solution has been
+proposed by [cite:@li2016]. The proposed solution is however only done for the cox proportional hazards
+model. I will aim to extend this to more general models, such that we have a framework that works for all models that estimates the cause-specific hazard or the cause-specific CIF. I will also modify the Super Leaner [cite:@super] such that the ensemble learner also follows this constaint.
+Using this new constrained risk prediction framework, I will build a risk prediction model on danish registry data that will predict the 5 and 10 year risk of getting type 2 diabetes, and will compare it to models build on existing methods.
+
+** Project 3: Large-Language-Models in risk prediction
+The danish registry data used for this project will contain a long history of covariates for each individual. The history of the covariates are important to utilize when building a risk prediction model such that we use all the given information. However in traditional likelihood based risk prediction, it is not clear how to incorperate this history in the likelihood. To combat this issue, machine learning methods have been proposed, such as [cite:@wright2021], which used a recurrent neural network to easily incoperate the history of all covariates in the model. There has been made significant progress in machine learning and AI in recent years, and a Large-Language-model (LLM) to model disease risk has already been proposed by [cite:@delphi], who used a modified GPT-model to model the risk of over 1000 diseases using UK biobank data. Using danish registry data, and only modeling T2D, we should be able to make a LLM that outperforms the Delphi-2M in T2D risk prediciton.
+
+
+
+\newpage
+* Bibliography
+#+print_bibliography:
