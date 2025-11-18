@@ -139,8 +139,6 @@ Center Aarhus, incorporating a wide range of data sources for model
 development, including the Danish Diabetes Database and several other
 health and socio-demographic registers.
 
-This line is to test github
-
 \newpage
 
 # HJALTE: I think that much of comes below is only marginally relevant for your phd protocol
