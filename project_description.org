@@ -9,8 +9,10 @@
 #+LaTeX_HEADER:\affil{Steno Diabetes Center Copenhagen}
 #+setupfile:~/emacs-genome/snps/org-templates/setup-all-purpose.org
 # #+superman-org-export-target: pdf
-#+bibliography: bibliography.bib
-#+LATEX_HEADER: \bibliographystyle{plainnat}
+#+BIBLIOGRAPHY: bibliography.bib
+#+cite_export: csl ~/emacs/.csl-styles/apa.csl
+
+
 
 
 \newpage
@@ -58,49 +60,65 @@ statistical methods that can identify subgroups of the population with
 high type 2 diabetes risk. To achieve these overarching goals for the DP-next
 project, my PhD work is divided in the following three sub-projects.
 
-** COMMENT Project 1: Identifying sub-groups with high diabetes risk
+
+** Project 1: Joint inference of cause-specific risks (Constrained risk prediction)
+# Notes
+# Talk more about the practical problem and then lead that into the theoretical problem
+
+# Practical problem: Assume we observe two people - person 1 has a hba1c of 53 and person 2 has hba1c of 53 but has end stage brain cancer. Person 1 will have a larger risk of getting T2D than person 2 even though they have the same hba1c level, because the risk of person 2 dying is way higher than person 1. Therefore we need to report both the risk of T2D and the risk of dying, for the risk prediction to make sense. When estimating these cause specific risks in practise in can happen that person 2 has a risk of T2D of 53% and a risk of dying of 60%, i.e. the total sum of risks is over 100%. We therefore need some framework that ensures that $S = 1-F_1-F_2$ where S is the event free survival function, and F 1 and 2 are the cause specific cumulative incidence functions.
+
+# old motivation
+# parametricly in a time-to-event setting, we typically aim to estimate the cause-specific hazards or the cause specific cumulative incidence functions (CIFs). A common issue for these types of models is that the total estimated risk can exceed 1 [cite:@fine]. Specifically, I aim to estimate the cause-specific CIFs for T2D and death, denoted as $F_{T2D}$ and $F_{death}$, respectively. In practise, it is possible that $F_{T2D}+F_{death}>1$ which implies that $S\neq 1-(F_{T2D}+F_{death})$, where $S$ is the event free survival function. This typically occurs for covariate patterns that fall outside the range of those observed in the training data. Therefore, it is necessary to develop a modeling framework that enforces the constraint $S = 1-(F_{T2D}+F_{death})$ (or equivalently $F_{T2D}+F_{death}\leq 1$) holds for all covariate values.
+
+
+# Motivation (Maybe should be risk of T2D and not dying??)
+When applying the type 2 diabetes (T2D) risk prediction model, it is essential to accurately report both the risk of T2D and the risk of death. This is necessary because, when investigating heterogeneity in T2D risk across the population, the competing risk of death must be taken into account, as it directly influences the estimated T2D risk. For example, if two individuals have similar covariate profiles but one has end-stage brain cancer, that individual will have a lower estimated risk of developing T2D solely due to an increased risk of death. Reporting both competing risks is also important for potential clinical applications: an individual with a high risk of death should not be targeted for preventive intervention based solely on an elevated T2D risk.
+
+The term risk of death can refer either to the risk of death without developing T2D or to the risk of death from any cause. The former is typically used in standard survival analysis, whereas the latter corresponds to the risk of death in the illness–death model. For this project, I will focus on the risk of death from any cause, as this measure also includes the risk of death occurring after T2D onset.
+
+# Current methods
+When estimating cause-specific risks in practice, the standard approach is to estimate them separately. However, this is suboptimal when the goal is to report both risks simultaneously, since the risks are interdependent. It is therefore necessary to estimate the cause-specific risks jointly, under appropriate constraints derived from the illness–death model. This issue has been examined previously, and a potential solution was proposed by [cite:@li2016]. However, that solution was developed only for the Cox proportional hazards model and has not been extended to other modeling frameworks.
+
+# Work plan
+In this project, I aim to generalize this approach within the Super Learner algorithm [cite:@super], ensuring that both the discrete and ensemble versions of the Super Learner satisfy the required constraint. The resulting Super Learner will produce the best-performing T2D risk prediction model by combining parametric, semi-parametric, and machine learning methods while maintaining coherence between the competing risks. Ultimately, the model will use Danish registry data to predict both the 5- and 10-year risks of developing T2D and the 5- and 10-year risks of death from any cause.
+
+** Project 2: Large-Language-Models in risk prediction
+# The methods described also needs to be more precise (it has to make sense reading it in 2 years)
+
+# Motivation
+To build the most accurate risk prediction model for T2D, it is essential to incorporate all available data. However, this is not a straightforward task, as the Danish registry data used in this project are longitudinal, and the interpretation of missingness varies across registries. Two of the registries used in this project are the Danish National Prescription Registry (LMDB) and the Register of Laboratory Results for Research (RLRR).
+In the LMDB, a missing observation indicates that an individual was not prescribed any drugs. In contrast, in the RLRR, a missing observation does not imply that the individual lacks biomarker data—it merely indicates that no laboratory measurements were recorded during that period. Furthermore, the time points of measurements differ from person to person. For example, if we wish to examine the most recent measurement of a covariate X before time 0, the last measurement for person 1 might be $X(0 - t)$, where $t=1$ day, whereas for person 2 it could be $X(0-s)$, with $s\neq t$ . This pattern is typical for most, if not all, covariates in the registries.
+
+Such data structures are not straightforward to incorporate into traditional likelihood-based risk prediction frameworks, which typically rely on summarizing longitudinal information (e.g., using means or weighted averages). Consequently, new methodological approaches are required to fully exploit the richness and temporal dynamics of the Danish registry data.
+
+# Current methods
+To address this challenge, recent studies have proposed the use of machine learning methods, in particular Neural Networks. [cite:@dynamicdeephit] build the Dynamic-DeepHit model that can incorporate longitudinal data measured at irregular timepoints to estimate the cause-specific cumulative incidence functions. However, it remains unclear how the model handles missing data or scales to large registry datasets. A similar approach was taken by [cite:@wright2021], who employed recurrent neural networks (RNNs) to efficiently incorporate covariate histories into a risk prediction model, where the model was trained on danish registry data. A natural extension of these methods is to use Transformers instead of RNNs, which have the advantage of better handling large datasets and longitudinal data with long histories [cite:@attention]. Using Transformers will make the framework similar to that of large language models (LLMs), which recently have been used for disease risk prediction by [cite:@delphi], who proposed a modified GPT-based model to predict the risk of over 1,000 diseases using data from the UK Biobank.
+
+# Work plan
+In this project, I will develop a large language model for T2D risk prediction, following a similar approach to [cite:@delphi]. Specifically, I will train a modified GPT-based model on Danish registry data to predict T2D risk exclusively. If this proves too challenging — given that this is a relatively unexplored area — I will instead employ methods similar to those proposed by [cite:@dynamicdeephit] and [cite:@wright2021].
+
+The model developed in this project will be build on Danish registry data exclusively, and will predict the 5- and 10-year risk of developing type 2 diabetes and predict the 5- and 10-year risk of dying from any cause. This model will then be compared with the Super Learner Algorithm devolped in Project 1, and the best performing T2D risk prediction model will be used for the DP-Next project.
+
+** Project 3: Identifying subgroups with high diabetes risk
 # 1. Motivation (please add something about WP4 and say risk of diabetes instead of risk)
-WP4 of the DP-next project aims to develop intervention strategies for prevention of T2D targeted on subgroups of the danish population, who has high risk of T2D. These high risk subgroups will be identified in this project. I will in this project aim to extend current methodology in sub-group
-analysis such that I can identify population subgroups with a high risk of T2D, using an
-existing risk prediction model.
+WP4 of the DP-Next project aims to develop targeted intervention strategies for the prevention of type 2 diabetes (T2D) among subgroups of the Danish population identified as being at high risk. These high-risk subgroups will be identified in the present project using the best performing T2D risk prediction model developed in Projects 1 and 2. The subgroups will be defined based on covariate patterns - for example, one subgroup might consist of males under 40 years of age with a body mass index (BMI) of 25 or higher. The overall goal is to identify specific covariate patterns that define the segments of the Danish population with the highest risk of developing T2D.
 
-# 2. State-of-the art (Start with a more classic reference perhaps? Lets discuss this)
-Traditional subgroup analysis methods compares predefined subgroups with eachother, to find f. eks. the highest risk subgroup or subgroups with highest treatment effect. A big drawbag to these methods is 
+Because the aim of WP4 is to recruit high-risk individuals from the Danish population into newly developed intervention strategies, the identified subgroups should be both recruitable and suitable for intervention. Therefore, I will aim to identify multiple high-risk subgroups with diverse covariate patterns, allowing the WP4 team to select those most appropriate for their recruitment and intervention objectives.
 
-[cite:@SDmapSubgroup] presents the novel SD-Map algorithm for exhaustive
-but efficient subgroup discovery. SD-Map guarantees to identify all interesting
-subgroup patterns contained in a data set, in contrast to heuristic or sampling-
-based methods.
+# 2. Current methods
+The subgroup analysis carried out in this project will be entirely data driven. Data driven subgroup analysis methods are already well devolped, with methods such as [cite:@SDmapSubgroup] who has developed the SD-Map algorithm, which relies on the Frequent Patern Growth (FP-growth) algorithm, for exhaustive and efficient subgroup discovery. Other methods such as regression trees or cluster analysis are also frequently used for subgroup discovery, with examples such as [cite:@subgrouptree] or [cite:@parikh2021]. These methods are however notoriously unstable, especially for large data [cite:@wani2024], and will need carefull considerations to identify the true high riks subgroups of the population.
 
-[cite:@subgrouptree] Introduced regression tree–based subgroup discovery for treatment heterogeneity — bridge between ML and statistics.
 
-[cite:@datadrivensubgroup] Unified statistical and ML subgroup methods; introduced validation and stability analysis. (for clinical trials)
+# 3. Work plan
+In this project, I will apply the best-performing T2D risk prediction model from Projects 1 and 2 to the entire Danish population, thereby obtaining an estimated T2D risk for each individual. I will then use the SD-Map or cluster analysis to identify the subgroups with the highest average T2D risk. To make the search more stable and the subgroups more interpretable, the subgroups will be defined based on 2-4 covariates. All subgroups with an average risk exceeding some threshold $\epsilon$ will be reported to the WP4 team, who can then select the subgroups most suitable for their intervention study.
 
-One current method in the field is [cite:@guo2023], who finds the
-highest risk sub-group by pre-specifying either two or six sub-groups,
-fitting a logistic regression model and then using a bootstrap
-inspired algorithm. This method attains a low biased estimate with
-tight confidence intervals. This framework needs to be extended such
-that it can identify multiple high risk sub-groups among any number of
-sub-groups and use an already fitted risk prediction model instead of
-fitting a logistic regression model. Another method is shown in
-[cite:@parikh2021], which uses an existing risk prediction model and
-clustering methods on the covariates to identify subgroups of
-high-risk. Clustering methods are however very sensitive and may not
-be suitable for our registry data due to size [cite:@wani2024], so a
-different method needs to be considered to identify the subgroups.
-
-# 3. Work plan (better to have a bad plan than no plan ;)
-The methodology developed in this project will be used to identify the
-sub-groups in the Danish population with the highest risk of
-developing type 2 diabetes.
 
 *** COMMENT Potential methods and thoughts
 In motivation talk more about the real world problems and what DP-next wants.
 Talk to the people from wp4 to know exactly what they want (should groups be pre-defined, should risk treshold be pre-defined, how many people should be in the groups).
 Maybe write the problem up mathematically
 
-Thomas does the following:
+Thomas does the following (Sounds like this is what the WP4 people would like):
 - Use the model on all individuals
 - Only look at the people with a risk greater than $\xi$ (some number)
 - Cluster people into groups based on covariates and make the clusters change size based on covariates reprensentitivenes (how often we see that specific covariate value in the population.
@@ -108,47 +126,8 @@ Thomas does the following:
 
 
 
-** Project 2: Joint inference of cause-spceific cumulative incidence functions (Constrained risk prediction)
-# Notes
-# Talk more about the practical problem and then lead that into the theoretical problem
-
-# Practical problem: Assume we observe two people - person 1 has a hba1c of 53 and person 2 has hba1c of 53 but has end stage brain cancer. Person 1 will have a larger risk of getting T2D than person 2 even though they have the same hba1c level, because the risk of person 2 dying is way higher than person 1. Therefore we need to report both the risk of T2D and the risk of dying, for the risk prediction to make sense. When estimating these cause specific risks in practise in can happen that person 2 has a risk of T2D of 53% and a risk of dying of 60%, i.e. the total sum of risks is over 100%. We therefore need some framework that ensures that $S = 1-F_1-F_2$ where S is the event free survival function, and F 1 and 2 are the cause specific cumulative incidence functions.
-
-# Motivation
-When using the type 2 diabetes (T2D) risk prediction model, it is essential to accurately report both the risk of T2D and the risk of death. This is because, when investigating heterogeneity in T2D risk across the population, it is necessary to account for the competing risk of death, which directly influences the estimated T2D risk. For example, if two individuals have similar covariates but one has end-stage brain cancer, that individual will have a lower estimated risk of T2D solely due to an increased risk of death. Reporting both competing risks is also important for potential clinical applications: an individual with a high risk of death should not be targeted for preventive intervention based solely on an elevated T2D risk.
-
-When estimating cause-specific risks parametricly in a time-to-event setting, we typically aim to estimate the cause-specific hazards or the cause specific cumulative incidence functions (CIFs). A common issue for these types of models is that the total estimated risk can exceed 1 [cite:@fine]. Specifically, I aim to estimate the cause-specific CIFs for T2D and death, denoted as $F_{T2D}$ and $F_{death}$, respectively. In practise, it is possible that $F_{T2D}+F_{death}>1$ which implies that $S\neq 1-(F_{T2D}+F_{death})$, where $S$ is the event free survival function. This typically occurs for covariate patterns that fall outside the range of those observed in the training data. Therefore, it is necessary to develop a modeling framework that enforces the constraint $S = 1-(F_{T2D}+F_{death})$ (or equivalently $F_{T2D}+F_{death}\leq 1$) holds for all covariate values.
-
-# Current methods
-This problem arises because the cause-specific hazards are estimated separately for each cause, rather than jointly under the constraint described above. The issue has been studied previously, and a potential solution was proposed by [cite:@li2016]. However, that solution was developed only for the Cox proportional hazards model and has not been extended to other modeling frameworks.
-
-# Work plan
-In this project, I aim to generalize this approach to a broader class of models, thereby establishing a unified framework applicable to all models that estimate either cause-specific hazards or cause-specific CIFs. I will then implement this framework within a Super Learner algorithm [cite:@super], designed to produce the best-performing T2D risk prediction model from an ensemble of parametric and machine learning models. This new constrained risk prediction framework will provide the core parametric components of the Super Learner. Ultimately, the resulting model will use Danish registry data to predict the 5- and 10-year risk of developing type 2 diabetes.
-
-
-** Project 3: Large-Language-Models in risk prediction
-# The methods described also needs to be more precise (it has to make sense reading it in 2 years)
-
-# Motivation
-To build the most accurate risk prediction model for T2D, it is essential to incorporate all available data. However, this is not a straightforward task, as the Danish registry data used in this project are longitudinal, and the interpretation of missingness varies across registries. Two of the registries used in this project are the Danish National Prescription Registry (LMDB) and the Register of Laboratory Results for Research (RLRR).
-In the LMDB, a missing observation indicates that an individual was not prescribed any drugs. In contrast, in the RLRR, a missing observation does not imply that the individual lacks biomarker data—it merely indicates that no laboratory measurements were recorded during that period. Furthermore, the time points of measurements differ from person to person. For example, if we wish to examine the most recent measurement of a covariate X before time 0, the last measurement for person 1 might be $X(0 - t)$, where $t=1$ day, whereas for person 2 it could be $X(0-s)$, with $s\neq t$ . This pattern is typical for most, if not all, covariates in the registries.
-
-Such data structures are impossible to incorporate into traditional likelihood-based risk prediction frameworks. Consequently, new methodological approaches are required to fully utilize the richness of the registry data.
-\newline
-
-# Current methods
-To address this challenge, recent studies have proposed the use of machine learning methods, in particular Neural Networks. [cite:@dynamicdeephit] build the Dynamic-DeepHit model that can incorporate longitudinal data measured at irregular timepoints to estimate the cause-specific cumulative incidence functions. However, it remains unclear how the model handles missing data or scales to large registry datasets. A similar approach was taken by [cite:@wright2021], who employed recurrent neural networks (RNNs) to efficiently incorporate covariate histories into a risk prediction model, where the model was trained danish registry data. A natural extension of these methods is to use Transformers instead of RNNs, which have the advantage of better handling large datasets and longitudinal data with long histories [cite:@attention]. Using Transformers will make the framework similar to that of large language models (LLMs), which recently have been used for disease risk prediction by [cite:@delphi], who proposed a modified GPT-based model to predict the risk of over 1,000 diseases using data from the UK Biobank.
-
-# Work plan
-In this project, I will develop a large language model for T2D risk prediction, following a similar approach to [cite:@delphi]. Specifically, I will train a modified GPT-based model on Danish registry data to predict T2D risk exclusively. If this proves too challenging — given that this is a relatively unexplored area — I will instead employ methods similar to those proposed by [cite:@dynamicdeephit] and [cite:@wright2021].
-
-The resulting model will be incorporated into the super learner algorithm developed in Project 2, contributing to the creation of the best-performing T2D risk prediction model for the Danish population.
-
-# Maybe describe a backup method
-
-
 ** Data
-The model will be developed using synthetic data following the
+The T2D risk prediction model will be developed using synthetic data following the
 structure of the Danish register-data. All analyses will be conducted
 on a DST project database and transferred/validated in both real
 Danish register data, and in Greenlandic and Faroese data. Using
@@ -159,6 +138,8 @@ will be conducted on the DST project databyase at Steno Diabetes
 Center Aarhus, incorporating a wide range of data sources for model
 development, including the Danish Diabetes Database and several other
 health and socio-demographic registers.
+
+\newpage
 
 # HJALTE: I think that much of comes below is only marginally relevant for your phd protocol
 # and the relevant part needs to be integrated into the 3 projects above. do you agree?
