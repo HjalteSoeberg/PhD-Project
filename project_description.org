@@ -17,23 +17,55 @@
 
 \newpage
 * DP-next
+# Stine kommentar: jeg synes du skal skrive lidt mere om DP_NEXT feks motivationen og formålet med studiet. Hvorfor er det vigtigt at forebyrgge T2 og især at gøre det på denne nye måde? hvad er det vi mener DP-next kan gøre bedre for verden? 
+It is well known that type 2 diabetes (T2D) in trial settings can be prevented in high-risk individuals
+through intensive lifestyle modifications. However, translating these findings into sustainable,
+real-world practices has proved difficult. The original interventions were too resource-intensive for
+large-scale use, while less intensive approaches only produced temporary weight loss without long-term
+diabetes prevention. Additionally, many of the highest at-risk groups are rarely identified in routine
+care, and participation in health promoting programs among these groups has declined. Despite these
+challenges, new opportunities for diabetes prevention have emerged, including advanced health data
+systems, machine learning, better understanding of behavior change, innovative intervention methods,
+real-time monitoring technologies, and widespread use of apps and smartphones. These resources remain
+underutilized but hold great potential to improve prevention strategies.
 
-My PhD project is part of a larger project called Sustainable Type 2 Diabetes Prevention for the 21st
-Century (DP-next=. DP-Next is
-a project aimed at developing a sustainably, effective strategy for
-prevention of Type 2 Diabetes in Denmark, Greenland and the Faroe
-Islands. #Stine kommentar: jeg synes du skal skrive lidt mere om DP_NEXT feks motivationen og formålet med studiet. Hvorfor er det vigtigt at forebyrgge T2 og især at gøre det på denne nye måde? hvad er det vi mener DP-next kan gøre bedre for verden? 
-The project has been funded by a Steno National Collaborative
+My PhD project is part of a larger project called Sustainable T2D Prevention for the 21st
+Century (DP-next). DP-Next is a project aimed at developing a sustainably, effective strategy for
+prevention of T2D in Denmark, Greenland and the Faroe
+Islands. The project has been funded by a Steno National Collaborative
 Grant from the Novo Nordisk Foundation. The DP-Next
 project consists of four work packages: WP1 (Management and
 Collaboration), WP2 (Risk Prediction), WP3 (Heterogeneity), WP4
 (Intervention Development). My PhD project falls under WP2 of the
-DP-Next project. In collaboration with the DP-Next teams I will work
-on the statistial methods for a register-based diabetes risk
-prediction model for the entire Danish, Greenlandic and Faroese
-populations. Furthermore, my PhD project work is connected with WP4
-where we will in collaboration derive subgroups based on heterogeneity
-in T2D risk.
+DP-Next project. The aim of WP2 is to develop an operational risk model that calculates an individual T2D risk prediction for the entire population of Denmark, Greenland and the Faroe Islands. We will achieve this by designing a T2D risk prediction algorithm based exclusively on existing register-based data. Furthermore, my PhD project work is connected with WP4, where we will in collaboration derive subgroups based on heterogeneity in T2D risk.
+
+** Data
+The T2D risk prediction model will be developed using synthetic data following the
+structure of the Danish register-data. All analyses will be conducted
+on a DST project database and transferred/validated in both real
+Danish register data, and in Greenlandic and Faroese data. Using
+register data available on DST, the type 2 diabetes outcome will be
+defined according to a previously validated classification
+[cite:@isaksen2023validation]. The analyses using Danish register data
+will be conducted on the DST project database at Steno Diabetes
+Center Aarhus, incorporating a wide range of data sources for model
+development from the following registries:
+
+- CPR Register [1968-]
+- LPR (Danish National Patient Registry) [1977-]
+- LMDB (Danish National Prescription Registry) and the Hospital Medication Register [1995-]
+- Register of Laboratory Results for Research [2011/2015Q4-]
+- Cancer Register [1987-]
+- Pathology Register [1997-]
+- Diabase (RKKP) [2013-]
+- RKKP (Danish Registry of Diabetes) [2022Q3-]
+- Health Insurance [1990-]
+- Medical Birth Register [1973-]
+- DREAM database [1991-/2008-]
+- HANDIC Register [2013-/2018-]
+- FAIK/register of incomes [1990-]
+- Vaccination Register [2013-/2016-]
+
 
 * My Project
 
@@ -41,7 +73,7 @@ My project aims to develop and adapt statistical methodology to create
 a super learner algorithm which produces diabetes risk prediction
 models based on Danish registry data. In collaboration with the research team
 of WP2, the algorithm will be applied to build models for the Danish population,
-be adapted to the Faroese and the Greenlandic populations. Specifically, I will
+and will be adapted to the Faroese and the Greenlandic populations. Specifically, I will
 apply the algorithm to build and validate a type 2 diabetes risk prediction
 model for the Danish population such that the model has the following
 features:
@@ -70,23 +102,27 @@ project, my PhD work is divided in the following three sub-projects.
 # parametricly in a time-to-event setting, we typically aim to estimate the cause-specific hazards or the cause specific cumulative incidence functions (CIFs). A common issue for these types of models is that the total estimated risk can exceed 1 [cite:@fine]. Specifically, I aim to estimate the cause-specific CIFs for T2D and death, denoted as $F_{T2D}$ and $F_{death}$, respectively. In practise, it is possible that $F_{T2D}+F_{death}>1$ which implies that $S\neq 1-(F_{T2D}+F_{death})$, where $S$ is the event free survival function. This typically occurs for covariate patterns that fall outside the range of those observed in the training data. Therefore, it is necessary to develop a modeling framework that enforces the constraint $S = 1-(F_{T2D}+F_{death})$ (or equivalently $F_{T2D}+F_{death}\leq 1$) holds for all covariate values.
 
 
-# Motivation (Maybe should be risk of T2D and not dying??) # stine kommentar: Jeg synes du her skal starte med en argumentation for hvorfor det er sundhedsmæssigt vigtigt at lave en model - hvorfor er det man gerne vil idenitificere folk i høj risiko for T2? og så komme frem til at hvis man skal prædiktere T2 er det vigtigt også at tage højde for død.
+# Motivation (Maybe should be risk of T2D and not dying??)
+# stine kommentar: Jeg synes du her skal starte med en argumentation for hvorfor det er sundhedsmæssigt vigtigt at lave en model - hvorfor er det man gerne vil idenitificere folk i høj risiko for T2? og så komme frem til at hvis man skal prædiktere T2 er det vigtigt også at tage højde for død.
+When applying the type 2 diabetes (T2D) risk prediction model, it is essential to accurately report both the risk of T2D and the risk of death. This is necessary because, when investigating heterogeneity in T2D risk across the population, the competing risk of death must be taken into account, as it directly influences the estimated T2D risk. For example, if two individuals have similar covariate profiles but one has end-stage brain cancer, that individual will have a lower estimated risk of developing T2D solely due to an increased risk of death. Reporting both competing risks is also important for potential clinical applications: an individual with a high risk of death should not be targeted for preventive intervention based solely on an elevated T2D risk.
+
+The term risk of death can refer either to the risk of death without developing T2D or to the risk of death from any cause. The former is typically used in standard survival analysis, whereas the latter corresponds to the risk of death in the illness–death model. For this project, I will focus on the risk of death from any cause, as this measure also includes the risk of death occurring after T2D onset and therefore provides a more comprehensive view of competing risks.
+
 # Current methods
 When estimating cause-specific risks in practice, the standard approach is to estimate the risk of T2D and the risk of death separately. However, this is suboptimal when the goal is to report both risks simultaneously, since the risks are interdependent. When investigating heterogeneity in T2D risk across the population, the competing risk of death must be taken into account, as it directly influences the estimated T2D risk. For example, if two individuals have similar covariate profiles but one has end-stage brain cancer, that individual will have a lower estimated risk of developing T2D solely due to an increased risk of death. Reporting both competing risks is also important for potential clinical applications: an individual with a high risk of death should not be targeted for preventive intervention based solely on an elevated T2D risk.It is therefore necessary to estimate the cause-specific risks jointly, under appropriate constraints derived from the illness–death model. This issue has been examined previously, and a potential solution was proposed by [cite:@li2016]. However, that solution was developed only for the Cox proportional hazards model and has not been extended to other modeling frameworks.
 
 The term risk of death can refer either to the risk of death without developing T2D or to the risk of death from any cause. The former is typically used in standard survival analysis, whereas the latter corresponds to the risk of death in the illness–death model. For this project, I will focus on the risk of death from any cause, as this measure also includes the risk of death occurring after T2D onset.
 
 
-# Work plan #Stine kommentar: Jeg kunne godt tænke mig lidt flere detaljer - feks. uddybe hvad der er "required constraint". Og hvilke parametrisk, semi-parametriske og machine learning approaches skal med i superlearner. Og starter du med en model og så putter det i en super learner eller hvordan? Det er sikkert dumme spørgsmål fra min side, men jeg plejer at sige at en metode skal være som en kogebog: hvis andre har de samme indgredienser som dig (altså regster data), så skal de, ved at læse dit metode afsnit, mere eller mindre kunne komme frem til det samme som dig. Det behøver ikke være meget detaljeret, men lidt mere end det her :)
+# Work plan #Stine kommentar: Jeg kunne godt tænke mig lidt flere detaljer - feks. uddybe hvad der er "required constraint". Og hvilke parametrisk, semi-parametriske og machine learning approaches skal med i superlearner. Og starter du med en model og så putter det i en super learner eller hvordan? Det er sikkert dumme spørgsmål fra min side, men jeg plejer at sige at en metode skal være som en kogebog: hvis andre har de samme indgredienser som dig (altså regster data), så skal de, ved at læse dit metode afsnit, mere eller mindre kunne komme frem til det samme som dig. Det behøver ikke være meget detaljeret, men lidt mere end det her :) 
 In this project, I aim to generalize this approach within the Super Learner algorithm [cite:@super], ensuring that both the discrete and ensemble versions of the Super Learner satisfy the required constraint. The resulting Super Learner will produce the best-performing T2D risk prediction model by combining parametric, semi-parametric, and machine learning methods while maintaining coherence between the competing risks. Ultimately, the model will use Danish registry data to predict both the 5- and 10-year risks of developing T2D and the 5- and 10-year risks of death from any cause.
 
 ** Project 2: Large-Language-Models in risk prediction
 # The methods described also needs to be more precise (it has to make sense reading it in 2 years)
 
 # Motivation
-#Stine kommentar: jeg synes du skal tilføje lidt om hvad man kan bruge de to registre til og hvorfor de er gode at have i en prædiktionsmodel. Man bliver kastet lidt ind i det som det er nu :)
-To build the most accurate risk prediction model for T2D, it is essential to incorporate all available data. However, this is not a straightforward task, as the Danish registry data used in this project are longitudinal, and the interpretation of missingness varies across registries. Two of the registries used in this project are the Danish National Prescription Registry (LMDB) and the Register of Laboratory Results for Research (RLRR).
-In the LMDB, a missing observation indicates that an individual was not prescribed any drugs. In contrast, in the RLRR, a missing observation does not imply that the individual lacks biomarker data—it merely indicates that no laboratory measurements were recorded during that period. Furthermore, the time points of measurements differ from person to person. For example, if we wish to examine the most recent measurement of a covariate X before time 0, the last measurement for person 1 might be $X(0 - t)$, where $t=1$ day, whereas for person 2 it could be $X(0-s)$, with $s\neq t$ . This pattern is typical for most, if not all, covariates in the registries.
+# Stine kommentar: jeg synes du skal tilføje lidt om hvad man kan bruge de to registre til og hvorfor de er gode at have i en prædiktionsmodel. Man bliver kastet lidt ind i det som det er nu :)
+To build the most accurate risk prediction model for T2D, it is essential to incorporate all available data. However, this is not a straightforward task, as the Danish registry data used in this project are longitudinal, and the interpretation of missingness varies across registries. Two of the registries used in this project are the Danish National Prescription Registry (LMDB) and the Register of Laboratory Results for Research (RLRR). In the LMDB, a missing observation indicates that an individual was not prescribed any drugs. In contrast, in the RLRR, a missing observation does not imply that the individual lacks biomarker data - it merely indicates that no laboratory measurements were recorded during that period. Furthermore, the time points of measurements differ from person to person. For example, if we wish to examine the most recent measurement of a covariate X before time 0, the last measurement for person 1 might be $X(0 - t)$, where $t=1$ day, whereas for person 2 it could be $X(0-s)$, with $s\neq t$ . This pattern is typical for most, if not all, covariates in the registries.
 
 Such data structures are not straightforward to incorporate into traditional likelihood-based risk prediction frameworks, which typically rely on summarizing longitudinal information (e.g., using means or weighted averages). Consequently, new methodological approaches are required to fully exploit the richness and temporal dynamics of the Danish registry data.
 
@@ -113,7 +149,7 @@ In this project, I will apply the best-performing T2D risk prediction model from
 
 
 *** COMMENT Potential methods and thoughts
-#Stine kommentar: jeg synes de to første punkter er meget relevante og noget du skal putte op i introduktionen
+# Stine kommentar: jeg synes de to første punkter er meget relevante og noget du skal putte op i introduktionen
 In motivation talk more about the real world problems and what DP-next wants.
 Talk to the people from wp4 to know exactly what they want (should groups be pre-defined, should risk treshold be pre-defined, how many people should be in the groups).
 Maybe write the problem up mathematically
@@ -123,29 +159,9 @@ Thomas does the following (Sounds like this is what the WP4 people would like):
 - Only look at the people with a risk greater than $\xi$ (some number)
 - Cluster people into groups based on covariates and make the clusters change size based on covariates reprensentitivenes (how often we see that specific covariate value in the population.
 
-
-
-#Stine kommentar: jeg vil flytte det her afsnit op til før du beskriver dine tre mål - det gør det meget nemmere at forstå din metode
-** Data
-The T2D risk prediction model will be developed using synthetic data following the
-structure of the Danish register-data. All analyses will be conducted
-on a DST project database and transferred/validated in both real
-Danish register data, and in Greenlandic and Faroese data. Using
-register data available on DST, the type 2 diabetes outcome will be
-defined according to a previously validated classification
-[cite:@isaksen2023validation]. The analyses using Danish register data
-will be conducted on the DST project databyase at Steno Diabetes
-Center Aarhus, incorporating a wide range of data sources for model
-development, including the Danish Diabetes Database and several other
-health and socio-demographic registers.
-
 \newpage
 
-# HJALTE: I think that much of comes below is only marginally relevant for your phd protocol
-# and the relevant part needs to be integrated into the 3 projects above. do you agree?
-
 * COMMENT WP2
-#Stine kommentar: det er præcis det her jeg efterspørger i introduktionen :)
 It is well known that type 2 diabetes (T2D) in trial settings can be prevented in high-risk individuals
 through intensive lifestyle modifications. However, translating these findings into sustainable,
 real-world practices has proved difficult. The original interventions were too resource-intensive for
@@ -157,7 +173,6 @@ systems, machine learning, better understanding of behavior change, innovative i
 real-time monitoring technologies, and widespread use of apps and smartphones. These resources remain
 underutilized but hold great potential to improve prevention strategies.
 
-#Stine kommentar: det er fint med det der står i nedenstående men put det i introduktionen og målret det, således at du kun har det med som er relevant for dit studie. Feks kan du godt slette alt det om at det skal overføres til Grønland og Færøerne, og hvis der er andre aspekter du ikke skal kigge på
 ** Aim
 The aim of WP2 is to develop an operational risk model that calculates an individual diabetes risk
 prediction for the entire population of Denmark, Greenland and the Faroe Islands. We will achieve this
