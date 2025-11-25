@@ -1,4 +1,4 @@
-% Created 2025-11-24 Mon 16:26
+% Created 2025-11-25 Tue 08:52
 % Intended LaTeX compiler: pdflatex
 \documentclass{article}
                \usepackage{listings}
@@ -59,7 +59,7 @@ basewidth={0.5em,0.4em},
 
 \newpage
 \section*{DP-next}
-\label{sec:org1e785f1}
+\label{sec:org72536c7}
 It is well known that type 2 diabetes (T2D) in trial settings can be prevented in high-risk individuals
 through intensive lifestyle modifications. However, translating these findings into sustainable,
 real-world practices has proved difficult. The original interventions were too resource-intensive for
@@ -82,7 +82,7 @@ Collaboration), WP2 (Risk Prediction), WP3 (Heterogeneity), WP4
 DP-Next project. The aim of WP2 is to develop an operational risk model that calculates an individual T2D risk prediction for the entire population of Denmark, Greenland and the Faroe Islands. We will achieve this by designing a T2D risk prediction algorithm based exclusively on existing register-based data. Furthermore, my PhD project work is connected with WP4, where we will in collaboration derive subgroups based on heterogeneity in T2D risk.
 
 \subsection*{Data}
-\label{sec:org7008fc1}
+\label{sec:org6a3642e}
 The T2D risk prediction model will be developed using synthetic data following the
 structure of the Danish register-data. All analyses will be conducted
 on a DST project database and transferred/validated in both real
@@ -113,7 +113,7 @@ development from the following registries:
 
 
 \section*{My Project}
-\label{sec:org27f867f}
+\label{sec:orgb4f1069}
 
 My project aims to develop and adapt statistical methodology to create
 a super learner algorithm which produces diabetes risk prediction
@@ -141,21 +141,18 @@ project, my PhD work is divided in the following three sub-projects.
 
 
 \subsection*{Project 1: Joint inference of cause-specific risks (Constrained risk prediction)}
-\label{sec:org922e2ce}
+\label{sec:org871e4a8}
 When applying the type 2 diabetes (T2D) risk prediction model, it is essential to accurately report both the risk of T2D and the risk of death. This is necessary because, when investigating heterogeneity in T2D risk across the population, the competing risk of death must be taken into account, as it directly influences the estimated T2D risk. For example, if two individuals have similar covariate profiles but one has end-stage brain cancer, that individual will have a lower estimated risk of developing T2D solely due to an increased risk of death. Reporting both competing risks is also important for potential clinical applications: an individual with a high risk of death should not be targeted for preventive intervention based solely on an elevated T2D risk.
 
 The term risk of death can refer either to the risk of death without developing T2D or to the risk of death from any cause. The former is typically used in standard survival analysis, whereas the latter corresponds to the risk of death in the illness–death model. For this project, I will focus on the risk of death from any cause, as this measure also includes the risk of death occurring after T2D onset and therefore provides a more comprehensive view of competing risks.
 
-When estimating cause-specific risks in practice, the standard approach is to estimate the risk of T2D and the risk of death separately. However, this is suboptimal when the goal is to report both risks simultaneously, since the risks are interdependent. When investigating heterogeneity in T2D risk across the population, the competing risk of death must be taken into account, as it directly influences the estimated T2D risk. For example, if two individuals have similar covariate profiles but one has end-stage brain cancer, that individual will have a lower estimated risk of developing T2D solely due to an increased risk of death. Reporting both competing risks is also important for potential clinical applications: an individual with a high risk of death should not be targeted for preventive intervention based solely on an elevated T2D risk.It is therefore necessary to estimate the cause-specific risks jointly, under appropriate constraints derived from the illness–death model. This issue has been examined previously, and a potential solution was proposed by (\citeprocitem{4}{Li \& Yang, 2016}). However, that solution was developed only for the Cox proportional hazards model and has not been extended to other modeling frameworks.
-
-The term risk of death can refer either to the risk of death without developing T2D or to the risk of death from any cause. The former is typically used in standard survival analysis, whereas the latter corresponds to the risk of death in the illness–death model. For this project, I will focus on the risk of death from any cause, as this measure also includes the risk of death occurring after T2D onset.
-
+When estimating cause-specific risks in practice, the standard approach is to estimate the risk of T2D and the risk of death separately. However, this is suboptimal when the goal is to report both risks simultaneously, since the risks are interdependent. It is therefore necessary to estimate the cause-specific risks jointly, under appropriate constraints derived from the illness–death model. This issue has been examined previously, and a potential solution was proposed by (\citeprocitem{4}{Li \& Yang, 2016}). However, that solution was developed only for the Cox proportional hazards model and has not been extended to other modeling frameworks.
 
 In this project, I aim to generalize this approach within the Super Learner algorithm (\citeprocitem{6}{Polley \& Van der Laan, 2010}), ensuring that both the discrete and ensemble versions of the Super Learner satisfy the required constraint. The resulting Super Learner will produce the best-performing T2D risk prediction model by combining parametric, semi-parametric, and machine learning methods while maintaining coherence between the competing risks. Ultimately, the model will use Danish registry data to predict both the 5- and 10-year risks of developing T2D and the 5- and 10-year risks of death from any cause.
 
 \subsection*{Project 2: Large-Language-Models in risk prediction}
-\label{sec:orgf1a7ae2}
-To build the most accurate risk prediction model for T2D, it is essential to incorporate all available data. However, this is not a straightforward task, as the Danish registry data used in this project are longitudinal, and the interpretation of missingness varies across registries. Two of the registries used in this project are the Danish National Prescription Registry (LMDB) and the Register of Laboratory Results for Research (RLRR). In the LMDB, a missing observation indicates that an individual was not prescribed any drugs. In contrast, in the RLRR, a missing observation does not imply that the individual lacks biomarker data - it merely indicates that no laboratory measurements were recorded during that period. Furthermore, the time points of measurements differ from person to person. For example, if we wish to examine the most recent measurement of a covariate X before time 0, the last measurement for person 1 might be \(X(0 - t)\), where \(t=1\) day, whereas for person 2 it could be \(X(0-s)\), with \(s\neq t\) . This pattern is typical for most, if not all, covariates in the registries.
+\label{sec:org331098d}
+To build the most accurate risk prediction model for T2D, it is essential to incorporate all available data. However, this is not a straightforward task, as the Danish registry data used in this project are longitudinal, and the interpretation of missingness varies across registries. For example, two of the registries used in this project are the Danish National Prescription Registry (LMDB) and the Register of Laboratory Results for Research (RLRR). In the LMDB, a missing observation indicates that an individual was not prescribed any drugs. In contrast, in the RLRR, a missing observation does not imply that the individual lacks biomarker data - it merely indicates that no laboratory measurements were recorded during that period. Furthermore, the time points of measurements differ from person to person. For example, if we wish to examine the most recent measurement of a covariate X before time 0, the last measurement for person 1 might be \(X(0 - t)\), where \(t=1\) day, whereas for person 2 it could be \(X(0-s)\), with \(s\neq t\) . This pattern is typical for most, if not all, covariates in the registries.
 
 Such data structures are not straightforward to incorporate into traditional likelihood-based risk prediction frameworks, which typically rely on summarizing longitudinal information (e.g., using means or weighted averages). Consequently, new methodological approaches are required to fully exploit the richness and temporal dynamics of the Danish registry data.
 
@@ -166,8 +163,8 @@ In this project, I will develop a large language model for T2D risk prediction, 
 The model developed in this project will be build on Danish registry data exclusively, and will predict the 5- and 10-year risk of developing type 2 diabetes and predict the 5- and 10-year risk of dying from any cause. This model will then be compared with the Super Learner Algorithm devolped in Project 1, and the best performing T2D risk prediction model will be used for the DP-Next project.
 
 \subsection*{Project 3: Identifying subgroups with high diabetes risk}
-\label{sec:orgc95fcd1}
-WP4 of the DP-Next project aims to develop targeted intervention strategies for the prevention of type 2 diabetes (T2D) among subgroups of the Danish population identified as being at high risk. These high-risk subgroups will be identified in the present project using the best performing T2D risk prediction model developed in Projects 1 and 2. The subgroups will be defined based on covariate patterns - for example, one subgroup might consist of males under 40 years of age with a body mass index (BMI) of 25 or higher. The overall goal is to identify specific covariate patterns that define the segments of the Danish population with the highest risk of developing T2D.
+\label{sec:orga200fc0}
+WP4 of the DP-Next project aims to develop targeted intervention strategies for the prevention of type 2 diabetes (T2D) among subgroups of the Danish population identified as being at high risk. These high-risk subgroups will be identified in this project using the best performing T2D risk prediction model developed in Projects 1 and 2. The subgroups will be defined based on covariate patterns - for example, one subgroup might consist of males under 40 years of age with a body mass index (BMI) of 25 or higher. The overall goal is to identify specific covariate patterns that define the segments of the Danish population with the highest risk of developing T2D.
 
 Because the aim of WP4 is to recruit high-risk individuals from the Danish population into newly developed intervention strategies, the identified subgroups should be both recruitable and suitable for intervention. Therefore, I will aim to identify multiple high-risk subgroups with diverse covariate patterns, allowing the WP4 team to select those most appropriate for their recruitment and intervention objectives.
 
@@ -178,7 +175,7 @@ In this project, I will apply the best-performing T2D risk prediction model from
 
 
 \section*{Bibliography}
-\label{sec:org99d968d}
+\label{sec:org522720f}
 \begin{hangparas}{1.5em}{1}
 \hypertarget{citeproc_bib_item_1}{Atzmueller, M., \& Puppe, F. (2006). Sd-map–a fast algorithm for exhaustive subgroup discovery. \textit{European Conference on Principles of Data Mining and Knowledge Discovery}, 6–17.}
 
