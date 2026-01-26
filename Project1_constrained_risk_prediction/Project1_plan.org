@@ -1,14 +1,32 @@
 * Project 1: Constrained Risk prediction
-Problem is that cause-specific risks sometimes sum to more than 1
+
+In the context of predicting the onset of diabetes, we note that
+people can die without ever developing diabetes. We are thus
+interested in predicting the risk of diabetes in a competing risk
+model and to enhance the interpretation we add either a predicted risk
+of death without diabetes or a predicted risk of death uanset
+diabetes. In both cases we parametrize the risks in terms of
+cause-specific hazard functions. One challenge is internal consistency
+and the respect of the parameter space: when we learn models for the
+cause-specific hazard functions based on a criterion function which,
+separately for each cause-specific hazard function, optimizes the
+learning with respect to e.g., a partial likelihood loss function, it
+may happen that cause-specific risks are larger than 1. 
 
 ** Recreating and understanding problem
-- Make a small simple dataset where the problem is recreated
-- check if problem happens without covariates using aalen-johansen (probably not)
-- The problem maybe only happens when we try to extrapolate covariates outside their space. Check if this is the case
-- Problem may not happen if we use randomforest for one/both causes because of the last point.
 
+- Make a small simple dataset where the problem is illustrated
+- check if problem happens without covariates using aalen-johansen (probably not)
+- check if problem happens with categorical covariates (probably not)  
+- The problem maybe only happens when we try to extrapolate values of continuous covariates outside the range seen in the learning dataset. Check if this is the case.
+- Problem may not happen if we use randomforest for one/both causes because randomforest does not extrapolate, it is a nearest neighbor method  (see Lin, Y., & Jeon, Y. (2006). Random Forests and Adaptive Nearest Neighbors. Journal of the American Statistical Association, 101(474), 578–590.).
 
 ** Solving the problem (only after having recreated it)
-- Start simple using only parametetric models (see bender_simulate_cox.pdf for paramettric cox)
-- Try using other modeling strategys other than maximum likelihood: constrained maximumlikelihood, using brierscore as lossfunction, maybe some lossfunction with the constraint
-- Try joint survival superleaner by munch and Gerds, with some modifications
+
+- Start using fully parametric hazard models (see bender_simulate_cox.pdf for parametric Cox-exponential and Cox-Weibull models).
+  + Check how the standard maximum likelihood method works
+  + Check if the standard maximum likelihood solution can be improved by adding constrains to the likelihood.
+- Extend the parametric Cox regression to poisson regression for survival analysis (see e.g., book by Aalen, Borgan Giessing, Chapter 5.3 page 140ff)    
+- Try other loss function such as Brier score directly on the target of the analysis (predicted risk of diabetes, predicted risk of death without diabetes).
+  + start with fixed prediction horizon t-years
+- Get inspired by notation and formulas in joint survival superleaner by Munch and Gerds.
