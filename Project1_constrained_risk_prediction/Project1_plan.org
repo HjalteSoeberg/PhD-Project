@@ -16,8 +16,10 @@ may happen that cause-specific risks are larger than 1.
 ** Recreating and understanding problem
 
 - Make a small simple dataset where the problem is illustrated
+  + Have made 3 examples: one where the problem happens even when the parameters are inside the covariate space but contains 200 datapoints and 4 variables, one with only 10 datapoints and one continous variable, and one with 20 data points and one binary variable.
 - check if problem happens without covariates using aalen-johansen (probably not)
-- check if problem happens with categorical covariates (probably not)  
+- check if problem happens with categorical covariates
+  + Have found an example where this happens  
 - The problem maybe only happens when we try to extrapolate values of continuous covariates outside the range seen in the learning dataset. Check if this is the case.
 - Problem may not happen if we use randomforest for one/both causes because randomforest does not extrapolate, it is a nearest neighbor method  (see Lin, Y., & Jeon, Y. (2006). Random Forests and Adaptive Nearest Neighbors. Journal of the American Statistical Association, 101(474), 578–590.).
 
