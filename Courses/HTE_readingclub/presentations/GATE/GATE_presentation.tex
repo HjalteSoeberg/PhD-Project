@@ -1,0 +1,252 @@
+% Created 2026-04-22 Wed 09:24
+% Intended LaTeX compiler: pdflatex
+\documentclass{beamer}\usepackage{listings}
+\usepackage{color}
+\usepackage{amsmath}
+\usepackage{array}
+\usepackage[T1]{fontenc}
+\usepackage{natbib}
+\lstset{
+keywordstyle=\color{blue},
+commentstyle=\color{red},stringstyle=\color[rgb]{0,.5,0},
+basicstyle=\ttfamily\small,
+columns=fullflexible,
+breaklines=true,
+breakatwhitespace=false,
+numbers=left,
+numberstyle=\ttfamily\tiny\color{gray},
+stepnumber=1,
+numbersep=10pt,
+backgroundcolor=\color{white},
+tabsize=4,
+literate={~}{$\sim$}{1}{ø}{{\o}}1{æ}{{\ae}}1{å}{{\aa}}1{Ø}{{\OE}}1{Æ}{{\AE}}1{Å}{{\AA}}1,keepspaces=true,
+showspaces=false,
+showstringspaces=false,
+xleftmargin=.23in,
+frame=single,
+basewidth={0.5em,0.4em},
+}
+\institute{University of Copenhagen}
+\subtitle{Nora Bearth and Michael Lechner}
+\RequirePackage[absolute, overlay]{textpos}
+\setbeamertemplate{footline}[frame number]
+\setbeamertemplate{navigation symbols}{}
+\RequirePackage{fancyvrb}
+\RequirePackage{array}
+\RequirePackage{multirow}
+\RequirePackage{tcolorbox}
+\definecolor{mygray}{rgb}{.95, 0.95, 0.95}
+\newcommand{\mybox}[1]{\vspace{.5em}\begin{tcolorbox}[boxrule=0pt,colback=mygray] #1 \end{tcolorbox}}
+\newcommand{\sfootnote}[1]{\renewcommand{\thefootnote}{\fnsymbol{footnote}}\footnote{#1}\setcounter{footnote}{0}\renewcommand{\thefootnote}{\arabic{foot note}}}
+\usepackage{alphalph}
+\alphalph{\value{footnote}}
+\setbeamertemplate{itemize item}{\textbullet}
+\setbeamertemplate{itemize subitem}{-}
+\setbeamertemplate{itemize subsubitem}{}
+\setbeamertemplate{enumerate item}{\insertenumlabel.}
+\setbeamertemplate{enumerate subitem}{\insertenumlabel.\insertsubenumlabel}
+\setbeamertemplate{enumerate subsubitem}{\insertenumlabel.\insertsubenumlabel.\insertsubsubenumlabel}
+\setbeamertemplate{enumerate mini template}{\insertenumlabel}
+\makeatletter\def\blfootnote{\xdef\@thefnmark{}\@footnotetext}\makeatother
+\newcommand{\E}{\ensuremath{\mathrm{E}}}
+\renewcommand{\P}{\ensuremath{\mathrm{P}}}
+\renewcommand{\d}{\ensuremath{\mathrm{d}}}
+\setbeamertemplate{caption}{\raggedright\insertcaption\par}
+
+\renewcommand*\familydefault{\sfdefault}
+\itemsep2pt
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{capt-of}
+\usepackage{hyperref}
+\usetheme{default}
+\date{}
+\title{Causal Machine Learning for Moderation Effects}
+\begin{document}
+
+\maketitle
+\section{Introduction}
+\label{sec:org48cdcd3}
+
+\begin{frame}[label={sec:org10fe149}]{Problem}
+Suppose that the effect of a particular training program for the unemployed is larger for women than for men. By comparing the average treatment effects for these two groups, without taking into account the different distribution of other covariates of men and women, such as education or labor market experience, we might implicitly compare a group with more extended labor market experience, with a group with shorter labor market experience.
+\end{frame}
+
+\begin{frame}[label={sec:orgea1864a}]{Contribution}
+\begin{itemize}
+\item Proposing the new parameter BGATE
+\item Showing three ways to estimate the BGATE
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[label={sec:org83b04fc}]{Definitions}
+N iid observations \(H_i = (D_i,Y_i,Z_i,X_i)\) (\(H_i\) has N rows so what does i mean?), where the treatment \(D_i\) and moderator variable \(Z_i\) are binary. A set of \(k\in\{1,...,p\}\) covariates \(X_{i,k}\) where \(X_i = (X_{i,1},...,X_{i,p})\). Define potential outcomes as \((Y^0_i,Y^1_i)\), and potential covariates and potential moderators are defined as \((X^0_i,X^1_i,Z^0_i,Z^1_i)\).
+\end{frame}
+
+\begin{frame}[label={sec:org1807721}]{ITE, ATE, CATE, IATE, GATE}
+\begin{itemize}
+\item ITE: \(\xi_i = Y^1_i-Y^0_i\)
+\item ATE: \(\theta = E[Y^1_i-Y^0_i]\)
+\item CATE: \(\theta^C = E[Y^1_i-Y^0_i\vert X_i = x]\)
+\item IATE: \(\tau(x,z) = E[Y^1_i-Y^0_i\vert Z_i = z,X_i = x]\)
+\item GATE: \(\theta^G = E[Y^1_i-Y^0_i\vert Z_i = z] = E[\tau(X_i,z)\vert Z_i = z]\)
+\end{itemize}
+\end{frame}
+
+\begin{frame}[label={sec:org580e43c}]{\(\Delta\)GATE}
+If we want the difference in treatment effect between the two groups, we can calculate the \(\Delta\)GATE:
+\begin{align*}
+\theta^{\Delta G} &= E[Y^1_i-Y^0_i\vert Z_i = 1]-E[Y^1_i-Y^0_i\vert Z_i = 0] \\
+&= E[\tau(X_i,1)\vert Z_i = 1]-E[\tau(X_i,0)\vert Z_i = 0],
+\end{align*}
+which may difficult to interpret as the two groups may differ in the distribution of other covariates \(X_i\).\pause\\[0pt]
+\\[0pt]
+Note: This is later in the paper written as
+\begin{align*}
+\theta^{\Delta G} = E[E[Y^1_i-Y^0_i\vert Z_i = 1]-E[Y^1_i-Y^0_i\vert Z_i = 0]]
+\end{align*}
+\end{frame}
+
+
+\begin{frame}[label={sec:orgf8cf0c4}]{BGATE and \(\Delta\)BGATE}
+The balanced group average treatment effect (BGATE) is designed to balance the distribution of other variables within the groups we want to compare to each other, i.e. \(Z_i = 0\) and \(Z_i = 1\). Use \(W_i\subseteq X_i\) to balance the GATEs and define the BGATE as:
+\begin{align*}
+\theta^B(z) &= E[E[Y^1_i-Y^0_i\vert Z_i = z,W_i]]?\\
+& = E[E[\tau(X_i,z)\vert Z_i = z,W_i]],
+\end{align*}
+\pause
+and its difference (\(\Delta\)BGATE) as
+\begin{align*}
+\theta^{\Delta B} &= E[E[Y^1_i-Y^0_i\vert Z_i = 1,W_i]-E[Y^1_i-Y^0_i\vert Z_i = 0,W_i]]\\
+& = E[E[\tau(X_i,1)\vert Z_i = 1,W_i]-E[\tau(X_i,0)\vert Z_i = 0,W_i]]
+\end{align*}
+\end{frame}
+
+
+
+\begin{frame}[label={sec:org5d38512}]{Decomposition of \(\Delta\)GATE}
+\begin{align*}
+&E[Y^1_i-Y^0_i\vert Z_i = 1]-E[Y^1_i-Y^0_i\vert Z_i = 0]\\
+& = E[E[Y^1_i-Y^0_i\vert Z_i = 1,W_i]-E[Y^1_i-Y^0_i\vert Z_i = 0,W_i]]\\
+& + \frac{P(Z_i = 0)}{P(Z_i = 1)}E[E[Y^1_i-Y^0_i\vert Z_i = 1,W_i]]-E[E[Y^1_i-Y^0_i\vert Z_i = 1,W_i]\vert Z_i = 0]\\
+& -\frac{P(Z_i = 1)}{P(Z_i = 0)}E[E[Y^1_i-Y^0_i\vert Z_i = 0,W_i]]-E[E[Y^1_i-Y^0_i\vert Z_i = 0,W_i]\vert Z_i = 1]
+\end{align*}
+\end{frame}
+
+
+\section{Identification}
+\label{sec:org7dda87d}
+
+\begin{frame}[label={sec:org6d0aae0}]{Assumptions 1: Identifying assumptions}
+\begin{itemize}
+\item Conditional Independence: \((Y^1_i,Y^0_i)\perp D_i\vert X_i = x,Z_i = z\),   \(\forall x\in\mathcal{X},\forall z\in\mathcal{Z}\).
+\item Common support: \(0<P(D_i = d\vert X_i = x,Z_i = z)<1\),   \(\forall d\in\{0,1\},\forall x\in\mathcal{X},\forall z\in\mathcal{Z}\).
+\item Exogeneity of confounder: \(X^0_i = X^1_i\), \(Z^0_i = Z^1_i\).
+\item Stable Unit Treatment Value Assumption: \(Y_i = D_iY^1_i+(1-D_i)Y^0_i\).
+\end{itemize}
+\end{frame}
+
+\begin{frame}[label={sec:org91676fc}]{Lemma 1}
+Under Assumptions 1 the parameter
+\begin{align*}
+\theta^B(z) &= E[E[Y^1_i-Y^0_i\vert Z_i = z,W_i]]
+\end{align*}
+is identified as
+\begin{align*}
+E[E[\mu_1(Z_i,X_i)-\mu_0(Z_i,X_i)\vert Z_i = z,W_i]]
+\end{align*}
+with \(\mu_d(z,x) = E[Y_i\vert D_i = d,Z_i = z,X_i = x]\).\pause\\[0pt]
+This means the parameter
+\begin{align*}
+\theta^{\Delta B} &= E[E[Y^1_i-Y^0_i\vert Z_i = 1,W_i]-E[Y^1_i-Y^0_i\vert Z_i = 0,W_i]]
+\end{align*}
+is identified as
+\begin{align*}
+E[&E[\mu_1(Z_i,X_i)-\mu_0(Z_i,X_i)\vert Z_i = 1,W_i]\\
+&-E[\mu_1(Z_i,X_i)-\mu_0(Z_i,X_i)\vert Z_i = 0,W_i]]
+\end{align*}
+\end{frame}
+
+\section{Estimation}
+\label{sec:orgc212c32}
+
+\begin{frame}[label={sec:orgf66d12f}]{Estimation strategy 1: Double/Debiased Machine Learning}
+Similar to Kennedy (2023) estimation CATE's with the DR-learner:
+\begin{itemize}
+\item Step 1: Estimate doubly robust score function
+\item Step 2: Regres score function on \(Z_i\) and \(W_i\)
+\item Step 3: Take the difference between the two groups defined by \(Z\) and average over variables in \(W\).
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[label={sec:org7d8bbfc}]{Score function}
+Score function is given by
+\begin{align*}
+\hat{\phi}^{\Delta B}(h;\theta^{\Delta B},\hat{\eta}) = &\hat{g}_1(w)-\hat{g}_0(w)+\frac{z\left(\hat{\delta}(h)-\hat{g}_1(w)\right)}{\hat{\lambda}_1(w)}\\
+&-\frac{(1-z)\left(\hat{\delta}(h)-\hat{g}_0(w)\right)}{1-\hat{\lambda}_1(w)}-\theta^{\Delta B}
+\end{align*}
+where
+\begin{align*}
+&\delta(h) = \mu_1(z,x)-\mu_0(z,x)+\frac{d(y-\mu_1(z,x))}{\pi_1(z,x)}-\frac{(1-d)(y-\mu_0(z,x))}{1-\pi_1(z,x)},
+\\
+&\lambda_z(w) = P(Z_i = z\vert W_i = w),\\
+&g_z(w) = E[\delta(H_i)\vert Z_i = z,W_i = w],\\
+&\mu_d(z,x) = E[Y_i\vert D_i = d,Z_i = z,X_i = x],\\
+&\pi_d(z,x) = P(D_i = d\vert Z_i = z,X_i = x).
+\end{align*}
+\end{frame}
+
+
+\begin{frame}[label={sec:org20e9d8c}]{Theorem 1}
+Under assumptions 2-6, the proposed estimation strategy for the \(\Delta\)BGATE obeys \(\sqrt{N}(\hat{\theta}^{\Delta B}-\theta^{\Delta B})\xrightarrow{d}N(0,V^*)\) with \(V^* = E[\phi^{\Delta B}(H_i;\theta^{\Delta B},\eta)^2]\), i.e. the \(\Delta\)BGATE is \(\sqrt{N}\) consistent and assymptotically normal.
+\end{frame}
+
+
+\begin{frame}[label={sec:orgeb2a2df}]{Estimation strategy 2: Automatic Debiased Machine Learning}
+Same three steps as strategy 1 but use Riesz representers instead of propensity scores.\pause \\[0pt]
+New score function:
+\begin{align*}
+\hat{\phi}^{\Delta B}_{Riesz}(h;\theta^{\Delta B},\hat{\eta}) = &\hat{g}_1(w)-\hat{g}_0(w)+\hat{\alpha}_z(w)\left(\hat{\delta}(h)-\hat{g}_z(w)\right)\\
+&-\theta^{\Delta B}_{Riesz}
+\end{align*}
+with
+\begin{align*}
+&\delta(h) = \mu_1(z,x)-\mu_0(z,x)+\alpha_d(z,x)(y-\mu_d(z,x)),
+\\
+&g_z(w) = E[\delta(H_i)\vert Z_i = z,W_i = w],\\
+&\mu_d(z,x) = E[Y_i\vert D_i = d,Z_i = z,X_i = x],\\
+\end{align*}
+\pause
+No Theoretical guarantees.
+\end{frame}
+
+\begin{frame}[label={sec:orgce96805}]{Estimation Strategy 3: Reweighting Approach}
+Idea: Change the data such that the distribution of the balancing variables are the same across the groups defined by the moderator variable. Having balanced data we can estimate the BGATE the same way as the GATE, as they are equal in balanced data.\pause
+
+\begin{itemize}
+\item Step 1: Duplicate each observation in \(h_i = \{x_i,z_i,d_i,y_i\}\) such that we create \(h^{balanced}_{i,1}\) and \(h^{balanced}_{i,0}\). Set \(z\) values in \(h^{balanced}_{i,1}\) to 1 and in \(h^{balanced}_{i,0}\) to 0. Then merge \(h^{balanced}_{i,1}\) and \(h^{balanced}_{i,0}\) to create \(h^{balanced}_i\) that will have \(2\times N\) rows.
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[label={sec:orgbc16eae}]{Step 2}
+Next step varies between the paper and the appendix
+\begin{itemize}
+\item For each observation in \(h^{balanced}_i\) the covariate values for the balancing variables \(W_i\) are compared with those of all other observations that share the same treatment/moderator assignment from the original data.\pause
+\item Using nearest neighboors (Mahalanobis distance metric) each observation is then matched to the nearest observation in the original data.\pause
+\item Replace the covariate values from the observation in \(h^{balanced}_i\) with the matched observation from the original data.\pause
+\end{itemize}
+
+
+No theoretical guarantees
+\end{frame}
+\end{document}

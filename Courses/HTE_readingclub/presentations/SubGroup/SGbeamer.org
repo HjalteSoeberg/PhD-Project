@@ -1,0 +1,122 @@
+#+TITLE: Assessing the Most Vulnerable Subgroup to Type II Diabetes Associated with Statin Usage: Evidence from Electronic Health Record Data
+#+Author: 
+#+Latex_header:\institute{University of Copenhagen}
+#+DATE: 
+#+EMAIL:hmik0048@ghost
+#+LaTeX_HEADER: \subtitle{Xinzhou Guo, Waverly Wei, Molei Liu, Tianxi Cai, Chong Wu, Jingshen Wang}
+#+setupfile:~/emacs-genome/snps/org-templates/setup-beamer.org
+* Introduction
+ 
+*** Problem
+- Statins are great at treating Coronary artey disease, but may be associated with increased risk of T2D
+- Many studies have been conducted, but they either didnt have significant results (didnt use HTE) or were done as randomized controlled trials, which
+  has small sample size and might not be generelizable beyond the study population.
+
+*** Goal
+1. Designing a rigorous causal framework that systematically
+   examines the causal effects of statin usage on T2D risk from observational data.\pause
+2. Uncovering which patient subgroup is most vulnerable for developing T2D after
+   taking statins.\pause
+3. Assessing the replicability and statistical significance of the most vulnerable
+   subgroup via a bootstrap calibration procedure.
+
+*** Model Setup
+- Logistic Regression model, as outcome is binary.
+- Pre-defined subgroups instead of post-hoc indentified subgroups (better when we have
+  prior knowledge to avoid potential bias induced by dataadaptive subgroup identification).
+
+*** Model Setup
+#+begin_export latex
+\begin{align*}
+\text{logit}\{P(y = 1\vert z,x)\} = z^T\beta+x^T\gamma,\text{   } \Vert\gamma\Vert_0 \ll p
+\end{align*}
+#+end_export
+- y is T2D status
+- $z\in \mathbb{R}^{p_1\times n}$ are the subgroup indicator variables
+- $x\in\mathbb{R}^{p_2\times n}$ is the intercept, the subgroup indicators and potential confounders
+- $\beta\in\mathbb{R}^{p_1}$ represents the subgroup causal effects on the scale of log odds
+  ratio, i.e. $\beta = \left(\text{log}\alpha_1,...,\log\alpha_{p_1}  \right)$ where
+  $\log\alpha_j$ is the log odds ratio of subgroup $j$.
+- It is assumed that $\gamma\in
+  \mathbb{R}^{p_2}$ is a sparse vector with support set $M_0$.
+
+*** Goal 1: Causal identification
+
+Show that the parameter of interest $\beta$ represents subgroup
+treatment effects under the model.\pause
+\\
+This is done in the appendix but only for 2 and 6 subgroups.
+
+*** Goal 2 and 3
+\pause
+Estimate $\beta_{max}$
+
+*** Goal 2 and 3: Problems
+1. Regularization bias (over/under-fitting)\pause
+2. Winners bias
+#+ATTR_ORG: :width 600
+#+ATTR_HTML: :width 100% :align center
+#+ATTR_LATEX: :width \linewidth
+[[~/phd/HTE_readingclub/presentations/SubGroup/bias.png]]
+
+*** Goal 2 and 3: Solution
+The R-split method (bootstrap-assisted R-split method):\pause
+1. Accounts for the regularization bias.\pause
+2. Accounts for the winners curse bias.\pause
+3. Gets the bias-reduced estimate and sharp confidence intervals.
+
+*** R-split: Step 1
+#+ATTR_ORG: :width 600
+#+ATTR_HTML: :width 100% :align center
+#+ATTR_LATEX: :width \linewidth
+[[~/phd/HTE_readingclub/presentations/SubGroup/step1.png]]
+
+*** R-split: Step 2
+#+ATTR_ORG: :width 600
+#+ATTR_HTML: :width 100% :align center
+#+ATTR_LATEX: :width \linewidth
+[[~/phd/HTE_readingclub/presentations/SubGroup/step2.png]]
+\pause
+
+#+ATTR_ORG: :width 600
+#+ATTR_HTML: :width 100% :align center
+#+ATTR_LATEX: :width \linewidth
+[[~/phd/HTE_readingclub/presentations/SubGroup/hess.png]]\pause
+$f_{i,b} = \text{expit'}(z_i^T\widehat{\beta}_b+x_{i,\widehat{M}_b}^T\widehat{\gamma}_b)$
+
+*** R-split: Step 2 - Intuition
+#+ATTR_ORG: :width 600
+#+ATTR_HTML: :width 100% :align center
+#+ATTR_LATEX: :width \linewidth
+[[~/phd/HTE_readingclub/presentations/SubGroup/step2.png]]
+
+Just as $\tilde{\beta}_{max}$ is a biased estimator of $\beta_{max}$, the simple bootstrap
+statistic $\max_{j\in [p_1]}\tilde{\beta}_j^*$ is not centered at $\tilde{\beta}_{max}$.
+*** R-split: Step 3
+#+ATTR_ORG: :width 600
+#+ATTR_HTML: :width 100% :align center
+#+ATTR_LATEX: :width \linewidth
+[[~/phd/HTE_readingclub/presentations/SubGroup/step3.png]]
+
+*** Choosing tuning parameter r
+#+ATTR_ORG: :width 600
+#+ATTR_HTML: :width 100% :align center
+#+ATTR_LATEX: :width \linewidth
+[[~/phd/HTE_readingclub/presentations/SubGroup/tuning.png]]
+
+*** Power comparison
+#+ATTR_ORG: :width 600
+#+ATTR_HTML: :width 100% :align center
+#+ATTR_LATEX: :width \linewidth
+[[~/phd/HTE_readingclub/presentations/SubGroup/power.png]]
+
+*** Simulations
+Their simulations study is for $p_1\in\{4,10\}$, while they only prove that $\beta$
+represents subgroup treatment for $p_1\in\{2,6\}$.
+
+
+*** Limitation
+- Only able to make inference on the most vulnerable subgroup.
+- Need pre-defined subgroups. Note that they argue that post-hoc identified groups can introduce
+  bias, so if we have prior knowledge it can be best to pre-define the subgroups.
+- Some proofs and examples are for their specific case and not generalized.

@@ -1,0 +1,40 @@
+* Model Description
+We aim to develope the model $\xi_0(X) = E(Y\vert X)$, where $X$ is a p-dimensional set of covariates, and $Y$ is the probability of interrest. $\xi_0$ is therefore some function that takes in covariates $X$ and estimates the probability $Y$ based on those covariates.
+
+** Event of interrest, time 0 and population
+The outcomes of interrested are the 5-year risk of getting type 2 diabetes (T2D) and the 5-risk of dying from any cause. The risk of dying also contains the persons who develope T2D and dies (Illness-death model). Denote these outcomes as $Y_{T2D}$ and $Y_{death}$. A person is in the target population if they can be found in the danish registries, and have not experienced either of the events (T2D, death) at time 0. Maybe we also need to require that all persons entered the registers before time $w$ (see section: Predictor variables), i.e. all persons have the same length of covariate history available. Could also be a requirement that all persons have at least one measurement of all covariates, before being in the target population.
+
+Here time 0 will be any date in 2026, so a person will be in the target population if there is a data in 2026 where they havent yet experinced either event. In the model building fase time 0 will most likely be in 2019 (See section: Thoughts). This means that at time 0 all persons in the population are event free, and at the event horizon (i.e. 5 years after time 0) they can either be event free, have T2D or be dead. NOTE: Havent mentioned censoring - maybe they can experince the fourth state which is censoring, or we can maybe ignore censoring if there are few who experince that. Censoring in this project would be because of emigration.
+
+** Predictor variables
+In this project we have data from all these dansih registries:
+- CPR Register [1968-]
+- LPR (Danish National Patient Registry) [1977-]
+- LMDB (Danish National Prescription Registry) and the Hospital Medication Register [1995-]
+- Register of Laboratory Results for Research [2011/2015Q4-]
+- Cancer Register [1987-]
+- Pathology Register [1997-]
+- Diabase (RKKP) [2013-]
+- RKKP (Danish Registry of Diabetes) [2022Q3-]
+- Health Insurance [1990-]
+- Medical Birth Register [1973-]
+- DREAM database [1991-/2008-]
+- HANDIC Register [2013-/2018-]
+- FAIK/register of incomes [1990-]
+- Vaccination Register [2013-/2016-]
+\newline
+One of the hard parts of this project is how to handle all this data in a good way. Almost all the covariates are longitudinal, and have a long history before time 0. There are two easy ways to handle this: 1) use the latest measurement, 2) make a weighted average, where newer values are weighted higher. The problem with these two methods is we dont use all the information we are given. This is why project2-LLM is interresting and maybe necessary. A more formal way to describe the covariates is to describe them the same way as (wright et al., 2021).\\
+\\
+Let $R$ be the number of data sources the predictor variables are extracted from. Our predictor variables are longitudinal, which means they are varying over time, and in our case this is before time 0. Denote $X_j^r(s)$ as the j'th variable extracted from the r'th register evaluated at time $s\leq 0$ where 0 is time 0. By this definingtion $X_j^r(0)$ is the latest value of the j'th covariate in the r'th register, that we can easily use for prediction. But as described above, there may be predictive value in using changes of the covariate process $X_j^r(s)$ over time. We therefore, for longitudinal variables, fix a length of exposure time window $w$ such that we can consider trajectories of the variables in the $w\text{-year}$ history of each person as predictors. This means that for each longitudinal variable we will have the set $\mathbf{X}_{j,w}^r = \{X_j^r(s):w\leq s\leq 0\}$. Note that $w$ can vary for each covariate, and will have the lower limit as the time0 - start date of the given registry in years. In practise we will most likely use the lowerlimit or set a fixed time f.eks. 5 years in the past. Let $J_r$ be the number of covariates in the r'th register, and $\mathbf{X} = \{\mathbf{X}_{j,w}^r:j\leq J_r,r\leq R\}$ as all the observed trajectories across all registries in the considered exposure window.
+\\
+We can derive new predictor variables using these trajectories. This could for example be, as mentioned before, a weighted average. Denote a derived predictor variable as $Z_k$, which is any variable which arises from applying a function $f_k$ to the trajectory (or history) of the other variables, i.e. $Z_k = f_k(\mathbf{X}_{j,w}^r:r = 1,...,R;j = 1,...,J_r)$. Here we consider $k = 1,...,K$ derived variables where $K$ is an integer which is allowed to be larger than the total number of predictor variables, $\sum_{r = 1}^R J_r$. Another example of a derived variable could be the average time between measurements of a variable. This means that if we have hba1c as a predictor, we can f.eks. make two derived predictors: the weighted average of hba1c in the exposure time window, and the average time between measurements of hba1c in the exposure time window. 
+
+* The Model
+As mentioned in the start we aim to develope the model $\xi_0(X) = E(Y\vert X)$, where $X$ is a p-dimensional set of covariates, and $Y$ is the probability of interrest. $\xi_0$ is therefore some function that takes in covariates $X$ and estimates the probability $Y$ based on those covariates. These covariates can enter in the function as just them selves, i.e. $X$, or as a derived predictor $Z_{k} = f_k(X(s))$, where $X(s)$ is the whole history of covariate $X$ and $f_k$ is some function (This is more detaile in the prevoius section).
+
+
+* Thoughts
+Assuming the prediction time horizon is 5 years:
+Time 0 for the final model will be any date in 2026 (or 2027,2028 depending on when the model is done). This means that to build and validate the model, the validation time 0 needs to be 2020 such that we have outcomes for all persons. This in turn means that we need to build the model only on data from 2015 and before, to mimic the real scenario.
+
+A question that may arise when the model is done, would be if we should retrain the model after 1 year, when new data is available. To test this, we can do the above scheme but the validation time 0 would instead be 2019. We can then test if the 2020 model outperforms the 2019 model

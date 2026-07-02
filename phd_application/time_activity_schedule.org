@@ -1,0 +1,21 @@
+#+OPTIONS: toc:nil
+#+LATEX: \noindent
+* Time and activity schedule
+:PROPERTIES:
+:UNNUMBERED: t
+:END:
+#+LATEX_HEADER: \usepackage{makecell}
+#+LATEX_HEADER: \renewcommand\arraystretch{1.3}
+#+LATEX_HEADER: \renewcommand\cellgape{\Gape[6pt]}
+#+ATTR_LATEX: :align |l|l|
+| Dates     | Activities                                                                                                                                                                                              |
+|---------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Dec 2025 – Jan 2026 | \makecell[l]{Read about existing litterature about risk prediction and articles related to constrained risk prediction. \\ Take the introductory PhD course.}                                           |
+| Feb 2025 – Jun 2026 | \makecell[l]{Project 1: Begin writing the article about constrained risk prediction. \\ Do projects at Steno and follow PhD courses.}                                                                   |
+| Jul 2026 – Nov 2026 | \makecell[l]{Project 1: Finalize paper draft. \\ Project 2: Begin article about combining constrained risk prediction with the super learner. \\ Do work at Steno and follow PhD courses}               |
+| Dec 2026 – Apr 2027 | \makecell[l]{Project 2: Finalize paper draft. \\ Project 3: Begin work on identifying the sub-groups with the highest risk of getting type 2 diabetes. \\ Do work at Steno and partake in conferences.} |
+| May 2027 – Sep 2027 | \makecell[l]{Project 2: Finalize paper draft. \\ Project 3: Continue writing article. \\ Do work at Steno and follow PhD courses and seminars}                                                          |
+| Oct 2027 – Feb 2028 | \makecell[l]{Project 3: Finalize paper draft. \\ Continue researching the subject.}                                                                                                                     |
+| Mar 2028 – Aug 2028 | \makecell[l]{Finalize papers and begin writing thesis. \\ Do work at Steno and take final PhD courses.}                                                                                                 |
+| Sep 2028 – Dec 2028 | \makecell[l]{Finalize thesis and defend it.}                                                                    |
+

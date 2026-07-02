@@ -1,0 +1,180 @@
+#+TITLE: Causal Machine Learning for Moderation Effects
+#+Author: 
+#+Latex_header:\institute{University of Copenhagen}
+#+DATE: 
+#+EMAIL:hmik0048@ghost
+#+LaTeX_HEADER: \subtitle{Nora Bearth and Michael Lechner}
+#+setupfile:~/emacs-genome/snps/org-templates/setup-beamer.org
+* Introduction
+
+*** Problem
+Suppose that the effect of a particular training program for the unemployed is larger for women than for men. By comparing the average treatment effects for these two groups, without taking into account the different distribution of other covariates of men and women, such as education or labor market experience, we might implicitly compare a group with more extended labor market experience, with a group with shorter labor market experience.
+
+*** Contribution
+- Proposing the new parameter BGATE
+- Showing three ways to estimate the BGATE
+
+ 
+*** Definitions
+N iid observations $H_i = (D_i,Y_i,Z_i,X_i)$ ($H_i$ has N rows so what does i mean?), where the treatment $D_i$ and moderator variable $Z_i$ are binary. A set of $k\in\{1,...,p\}$ covariates $X_{i,k}$ where $X_i = (X_{i,1},...,X_{i,p})$. Define potential outcomes as $(Y^0_i,Y^1_i)$, and potential covariates and potential moderators are defined as $(X^0_i,X^1_i,Z^0_i,Z^1_i)$.
+
+*** ITE, ATE, CATE, IATE, GATE
+- ITE: $\xi_i = Y^1_i-Y^0_i$
+- ATE: $\theta = E[Y^1_i-Y^0_i]$
+- CATE: $\theta^C = E[Y^1_i-Y^0_i\vert X_i = x]$
+- IATE: $\tau(x,z) = E[Y^1_i-Y^0_i\vert Z_i = z,X_i = x]$
+- GATE: $\theta^G = E[Y^1_i-Y^0_i\vert Z_i = z] = E[\tau(X_i,z)\vert Z_i = z]$
+
+*** \Delta{}GATE
+If we want the difference in treatment effect between the two groups, we can calculate the \Delta{}GATE:
+#+begin_export latex
+\begin{align*}
+\theta^{\Delta G} &= E[Y^1_i-Y^0_i\vert Z_i = 1]-E[Y^1_i-Y^0_i\vert Z_i = 0] \\
+&= E[\tau(X_i,1)\vert Z_i = 1]-E[\tau(X_i,0)\vert Z_i = 0],
+\end{align*}
+#+end_export
+which may difficult to interpret as the two groups may differ in the distribution of other covariates $X_i$.\pause\\
+\\
+Note: This is later in the paper written as
+#+begin_export latex
+\begin{align*}
+\theta^{\Delta G} = E[E[Y^1_i-Y^0_i\vert Z_i = 1]-E[Y^1_i-Y^0_i\vert Z_i = 0]]
+\end{align*}
+#+end_export
+
+
+*** BGATE and \Delta{}BGATE
+The balanced group average treatment effect (BGATE) is designed to balance the distribution of other variables within the groups we want to compare to each other, i.e. $Z_i = 0$ and $Z_i = 1$. Use $W_i\subseteq X_i$ to balance the GATEs and define the BGATE as:
+#+begin_export latex
+\begin{align*}
+\theta^B(z) &= E[E[Y^1_i-Y^0_i\vert Z_i = z,W_i]]?\\
+& = E[E[\tau(X_i,z)\vert Z_i = z,W_i]],
+\end{align*}
+#+end_export
+\pause
+and its difference (\Delta{}BGATE) as
+#+begin_export latex
+\begin{align*}
+\theta^{\Delta B} &= E[E[Y^1_i-Y^0_i\vert Z_i = 1,W_i]-E[Y^1_i-Y^0_i\vert Z_i = 0,W_i]]\\
+& = E[E[\tau(X_i,1)\vert Z_i = 1,W_i]-E[\tau(X_i,0)\vert Z_i = 0,W_i]]
+\end{align*}
+#+end_export
+
+
+
+*** Decomposition of \Delta{}GATE
+#+begin_export latex
+\begin{align*}
+&E[Y^1_i-Y^0_i\vert Z_i = 1]-E[Y^1_i-Y^0_i\vert Z_i = 0]\\
+& = E[E[Y^1_i-Y^0_i\vert Z_i = 1,W_i]-E[Y^1_i-Y^0_i\vert Z_i = 0,W_i]]\\
+& + \frac{P(Z_i = 0)}{P(Z_i = 1)}E[E[Y^1_i-Y^0_i\vert Z_i = 1,W_i]]-E[E[Y^1_i-Y^0_i\vert Z_i = 1,W_i]\vert Z_i = 0]\\
+& -\frac{P(Z_i = 1)}{P(Z_i = 0)}E[E[Y^1_i-Y^0_i\vert Z_i = 0,W_i]]-E[E[Y^1_i-Y^0_i\vert Z_i = 0,W_i]\vert Z_i = 1]
+\end{align*}
+#+end_export
+
+
+* Identification
+
+*** Assumptions 1: Identifying assumptions
+- Conditional Independence: $(Y^1_i,Y^0_i)\perp D_i\vert X_i = x,Z_i = z$,   $\forall x\in\mathcal{X},\forall z\in\mathcal{Z}$.
+- Common support: $0<P(D_i = d\vert X_i = x,Z_i = z)<1$,   $\forall d\in\{0,1\},\forall x\in\mathcal{X},\forall z\in\mathcal{Z}$.
+- Exogeneity of confounder: $X^0_i = X^1_i$, $Z^0_i = Z^1_i$.
+- Stable Unit Treatment Value Assumption: $Y_i = D_iY^1_i+(1-D_i)Y^0_i$.
+
+*** Lemma 1
+Under Assumptions 1 the parameter
+#+begin_export latex
+\begin{align*}
+\theta^B(z) &= E[E[Y^1_i-Y^0_i\vert Z_i = z,W_i]]
+\end{align*}
+#+end_export
+is identified as
+#+begin_export latex
+\begin{align*}
+E[E[\mu_1(Z_i,X_i)-\mu_0(Z_i,X_i)\vert Z_i = z,W_i]]
+\end{align*}
+#+end_export
+with $\mu_d(z,x) = E[Y_i\vert D_i = d,Z_i = z,X_i = x]$.\pause\\
+This means the parameter
+#+begin_export latex
+\begin{align*}
+\theta^{\Delta B} &= E[E[Y^1_i-Y^0_i\vert Z_i = 1,W_i]-E[Y^1_i-Y^0_i\vert Z_i = 0,W_i]]
+\end{align*}
+#+end_export
+is identified as
+#+begin_export latex
+\begin{align*}
+E[&E[\mu_1(Z_i,X_i)-\mu_0(Z_i,X_i)\vert Z_i = 1,W_i]\\
+&-E[\mu_1(Z_i,X_i)-\mu_0(Z_i,X_i)\vert Z_i = 0,W_i]]
+\end{align*}
+#+end_export
+
+* Estimation
+
+*** Estimation strategy 1: Double/Debiased Machine Learning
+Similar to Kennedy (2023) estimation CATE's with the DR-learner:
+- Step 1: Estimate doubly robust score function
+- Step 2: Regres score function on $Z_i$ and $W_i$
+- Step 3: Take the difference between the two groups defined by $Z$ and average over variables in $W$.
+
+
+*** Score function
+Score function is given by
+#+begin_export latex
+\begin{align*}
+\hat{\phi}^{\Delta B}(h;\theta^{\Delta B},\hat{\eta}) = &\hat{g}_1(w)-\hat{g}_0(w)+\frac{z\left(\hat{\delta}(h)-\hat{g}_1(w)\right)}{\hat{\lambda}_1(w)}\\
+&-\frac{(1-z)\left(\hat{\delta}(h)-\hat{g}_0(w)\right)}{1-\hat{\lambda}_1(w)}-\theta^{\Delta B}
+\end{align*}
+#+end_export
+where
+#+begin_export latex
+\begin{align*}
+&\delta(h) = \mu_1(z,x)-\mu_0(z,x)+\frac{d(y-\mu_1(z,x))}{\pi_1(z,x)}-\frac{(1-d)(y-\mu_0(z,x))}{1-\pi_1(z,x)},
+\\
+&\lambda_z(w) = P(Z_i = z\vert W_i = w),\\
+&g_z(w) = E[\delta(H_i)\vert Z_i = z,W_i = w],\\
+&\mu_d(z,x) = E[Y_i\vert D_i = d,Z_i = z,X_i = x],\\
+&\pi_d(z,x) = P(D_i = d\vert Z_i = z,X_i = x).
+\end{align*}
+#+end_export
+
+
+*** Theorem 1
+Under assumptions 2-6, the proposed estimation strategy for the \Delta{}BGATE obeys $\sqrt{N}(\hat{\theta}^{\Delta B}-\theta^{\Delta B})\xrightarrow{d}N(0,V^*)$ with $V^* = E[\phi^{\Delta B}(H_i;\theta^{\Delta B},\eta)^2]$, i.e. the \Delta{}BGATE is $\sqrt{N}$ consistent and assymptotically normal.
+
+
+*** Estimation strategy 2: Automatic Debiased Machine Learning
+Same three steps as strategy 1 but use Riesz representers instead of propensity scores.\pause \\
+New score function:
+#+begin_export latex
+\begin{align*}
+\hat{\phi}^{\Delta B}_{Riesz}(h;\theta^{\Delta B},\hat{\eta}) = &\hat{g}_1(w)-\hat{g}_0(w)+\hat{\alpha}_z(w)\left(\hat{\delta}(h)-\hat{g}_z(w)\right)\\
+&-\theta^{\Delta B}_{Riesz}
+\end{align*}
+#+end_export
+with
+#+begin_export latex
+\begin{align*}
+&\delta(h) = \mu_1(z,x)-\mu_0(z,x)+\alpha_d(z,x)(y-\mu_d(z,x)),
+\\
+&g_z(w) = E[\delta(H_i)\vert Z_i = z,W_i = w],\\
+&\mu_d(z,x) = E[Y_i\vert D_i = d,Z_i = z,X_i = x],\\
+\end{align*}
+#+end_export
+\pause
+No Theoretical guarantees.
+
+*** Estimation Strategy 3: Reweighting Approach
+Idea: Change the data such that the distribution of the balancing variables are the same across the groups defined by the moderator variable. Having balanced data we can estimate the BGATE the same way as the GATE, as they are equal in balanced data.\pause
+
+- Step 1: Duplicate each observation in $h_i = \{x_i,z_i,d_i,y_i\}$ such that we create $h^{balanced}_{i,1}$ and $h^{balanced}_{i,0}$. Set $z$ values in $h^{balanced}_{i,1}$ to 1 and in $h^{balanced}_{i,0}$ to 0. Then merge $h^{balanced}_{i,1}$ and $h^{balanced}_{i,0}$ to create $h^{balanced}_i$ that will have $2\times N$ rows.
+
+
+*** Step 2
+Next step varies between the paper and the appendix
+- For each observation in $h^{balanced}_i$ the covariate values for the balancing variables $W_i$ are compared with those of all other observations that share the same treatment/moderator assignment from the original data.\pause
+- Using nearest neighboors (Mahalanobis distance metric) each observation is then matched to the nearest observation in the original data.\pause
+- Replace the covariate values from the observation in $h^{balanced}_i$ with the matched observation from the original data.\pause
+
+
+No theoretical guarantees

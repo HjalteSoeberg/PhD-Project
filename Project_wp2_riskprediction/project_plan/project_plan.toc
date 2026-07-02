@@ -1,0 +1,16 @@
+\contentsline {section}{\numberline {1}Objective}{1}{section.1}%
+\contentsline {section}{\numberline {2}Plan}{1}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Make descriptive statistics over varialbes in each registry}{1}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Need to know exactly what the model will used for}{1}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.3}Test the feasability of the idea}{2}{subsection.2.3}%
+\contentsline {subsection}{\numberline {2.4}Make train and test data}{2}{subsection.2.4}%
+\contentsline {subsubsection}{\numberline {2.4.1}Time 0 and when a person is included}{3}{subsubsection.2.4.1}%
+\contentsline {subsubsection}{\numberline {2.4.2}Artificial censoring}{3}{subsubsection.2.4.2}%
+\contentsline {subsubsection}{\numberline {2.4.3}Covariates and registries}{3}{subsubsection.2.4.3}%
+\contentsline {section}{\numberline {3}Descriptive statistics}{6}{section.3}%
+\contentsline {subsection}{\numberline {3.1}events}{6}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}DMreg / diabetes}{6}{subsection.3.2}%
+\contentsline {section}{\numberline {4}Modeling strategy}{6}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Play}{6}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Training and testing the model}{6}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}Will the model be better with newer data, and how to do it?}{6}{subsection.4.3}%

@@ -1,0 +1,156 @@
+% Created 2026-05-01 Fri 13:51
+% Intended LaTeX compiler: pdflatex
+\documentclass{article}
+               \usepackage{listings}
+\usepackage{color}
+\usepackage{amsmath}
+\usepackage{array}
+\usepackage[T1]{fontenc}
+\usepackage{natbib}
+               \usepackage{authblk}
+\author{Hjalte Søberg Mikkelsen}
+\affil{Steno Diabetes Center Copenhagen}
+\RequirePackage{tcolorbox}
+\definecolor{lightGray}{gray}{0.98}
+\definecolor{medioGray}{gray}{0.83}
+\definecolor{mygray}{rgb}{.95, 0.95, 0.95}
+\newcommand{\mybox}[1]{\vspace{.5em}\begin{tcolorbox}[boxrule=0pt,colback=mygray] #1 \end{tcolorbox}}
+
+\lstset{
+keywordstyle=\color{blue},
+commentstyle=\color{red},stringstyle=\color[rgb]{0,.5,0},
+basicstyle=\ttfamily\small,
+columns=fullflexible,
+breaklines=true,
+breakatwhitespace=false,
+numbers=left,
+numberstyle=\ttfamily\tiny\color{gray},
+stepnumber=1,
+numbersep=10pt,
+backgroundcolor=\color{white},
+tabsize=4,
+literate={~}{$\sim$}{1}{ø}{{\o}}1{æ}{{\ae}}1{å}{{\aa}}1{Ø}{{\OE}}1{Æ}{{\AE}}1{Å}{{\AA}}1,keepspaces=true,
+showspaces=false,
+showstringspaces=false,
+xleftmargin=.23in,
+frame=single,
+basewidth={0.5em,0.4em},
+}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{capt-of}
+\usepackage{hyperref}
+\date{}
+\title{PhD Thesis}
+\makeatletter
+\newcommand{\citeprocitem}[2]{\hyper@linkstart{cite}{citeproc_bib_item_#1}#2\hyper@linkend}
+\makeatother
+
+\usepackage[notquote]{hanging}
+\begin{document}
+
+\maketitle
+
+\section*{Demography and epidemiologi}
+\label{sec:org8f9b1a0}
+
+\subsection*{Incidence rate}
+\label{sec:orgcd699ab}
+
+Rate
+
+\subsubsection*{Standardization}
+\label{sec:org9302da3}
+
+age
+
+
+\subsection*{Lifetable analysis}
+\label{sec:orgd0ba5e2}
+A lifetable describes how a hypothetical closed birth cohort reduces with rising age alone because of death. The cohort is fictional and consists of \(\ell\)\textsubscript{0} persons, where it is assumed all people are born at the same time. \(\ell\)\textsubscript{0} is called radix and is usually set to 100.000 people. The function \(\ell\)\textsubscript{x} (\(l\) is used in the examples below) tells us how many people are still alive at the age \(x\), and describes how the table-population declines because of death. As the cohort is closed it must be true that \(\ell\)\textsubscript{x\(\ge\)} \(\ell\)\textsubscript{x+1}. In the lifetable \(x\) is the start of the age interval.\\[0pt]
+
+Example of a lifetable
+\begin{verbatim}
+# A tibble: 11 × 9
+   Alder      l     d     p        q     o      L        T     e
+   <fct>  <dbl> <dbl> <dbl>    <dbl> <dbl>  <dbl>    <dbl> <dbl>
+ 1 0     100000   251 0.997 0.00251  1      99774 8334430. 83.3 
+ 2 1-9    99749    80 0.999 0.000799 0.997 897385 8234656. 82.6 
+ 3 10-19  99670    96 0.999 0.000963 0.997 996216 7337271. 73.6 
+ 4 20-29  99574   189 0.998 0.00190  0.996 994789 6341056. 63.7 
+ 5 30-39  99384   377 0.996 0.00380  0.994 991955 5346266. 53.8 
+ 6 40-49  99007   890 0.991 0.00899  0.990 985620 4354311. 44.0 
+ 7 50-59  98117  2821 0.971 0.0288   0.981 967065 3368691. 34.3 
+ 8 60-69  95296  7751 0.919 0.0813   0.953 914204 2401626. 25.2 
+ 9 70-79  87545 16278 0.814 0.186    0.875 794062 1487422. 17.0 
+10 80-89  71267 36296 0.491 0.509    0.713 531192  693360.  9.73
+11 90+    34971 34971 0     1        0.350 162168  162168.  4.64
+\end{verbatim}
+
+\begin{table}[htbp]
+\caption{\label{tab:lifetable-columns}Explanation of the columns in a lifetable}
+\centering
+\begin{tabular}{l|l}
+Column & Meaning\\[0pt]
+\hline
+Age & Age-interval\\[0pt]
+l & Decrement function: Number of table persons in the start of the interval\\[0pt]
+d & Number of deaths in the interval\\[0pt]
+p & Probability of surviving in the inteval given being alive at the start\\[0pt]
+q & Probability of dying in the interal given being alive at the start\\[0pt]
+o & Probability of having survived up until the start\\[0pt]
+L & Total risktime in the interval\\[0pt]
+T & Total liftime from the start of the interval\\[0pt]
+e & Average rest lifetime\\[0pt]
+\end{tabular}
+\end{table}
+
+From the lifetable example we can see, under the assumption that the mortality rates won't change, that a newborn baby will be expected to live for 83.3 years, and that a 50 year old would be expected to live for another 34.3 years.
+\begin{align*}
+o_x= \frac{\ell_{x}}{\ell_0}
+\end{align*}
+
+\(_kq_x\) is the probabilty for a person at the age \(x\) of dying before the age \(x+k\). To approximate this probability we use the formular:
+\begin{equation}\label{k3-dhyppig}
+_kq_x= \frac{k\cdot {_kM_x}}{1+(k-{_ka_x})\cdot {_kM_x}}.
+\end{equation}
+This formular depends on the age specific mortality rates \(_kM_x\), the length of the age interval \(k\) and Chiangs \(a\), \(_ka_x\). \(_ka_x\) describes the average lifetime in the age interval for the persons who died in between the ages \(x\) and \(x+k-1\). This is usually set to the middle of the interval, i.e. \(_10_a_50 = 5\). This assumes that the risk of dying in the interval is the same across the ages. This is usually not the case in the first interval and the last.\\[0pt]
+The central formular can be rewritten to:
+\begin{align*}
+\frac{k\cdot {_kM_x}}{1+(k-{_ka_x})\cdot {_kM_x}} = \frac{k\cdot {_kD_x}}{_kR_x+(k-{_ka_x})\cdot {_kD_x}}
+\end{align*}
+\begin{align*}
+_kd_x = {_kq_x}\cdot \ell_x.
+\end{align*}
+\begin{align*}
+\ell_{x+k} = \ell_x-{_kd_x}.
+\end{align*}
+\begin{align*}
+\ell_{x+k} = \ell_x(1-{_kq_x}).
+\end{align*}
+\begin{align*}
+_kd_x = \ell_x-\ell_{x+k}.
+\end{align*}
+
+
+
+\section*{Survival Analysis}
+\label{sec:org638a02d}
+
+\subsection*{Cox model}
+\label{sec:org12ec0b0}
+
+\subsubsection*{Breslow Estimator}
+\label{sec:orgfe2ae3b}
+
+\subsubsection*{Parametric}
+\label{sec:org7ccd7d4}
+\end{document}

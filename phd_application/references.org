@@ -1,0 +1,45 @@
+#+OPTIONS: toc:nil
+#+LATEX: \noindent
+Atzmueller, M., & Puppe, F. (2006). Sd-map–a fast algorithm for exhaustive
+subgroup discovery. European Conference on Principles of Data Mining and
+Knowledge Discovery, 6–17.\\
+\\
+Isaksen, A. A., Sandbæk, A., & Bjerg, L. (2023). Validation of register-based
+diabetes classifiers in danish data. Clinical Epidemiology, 569–581.\\
+\\
+Lee, C., Yoon, J., & Van Der Schaar, M. (2019). Dynamic-deephit: A deep
+learning approach for dynamic survival analysis with competing risks based
+on longitudinal data. Ieee Transactions on Biomedical Engineering, 67 (1),
+122–133.\\
+\\
+Li, G., & Yang, Q. (2016). Joint inference for competing risks survival data.
+Jornal of the American Statistical Association, 111 (515), 1289–1300.\\
+\\
+Parikh, R. B., Linn, K. A., Yan, J., Maciejewski, M. L., Rosland, A.-M., Volpp,
+K. G., Groeneveld, P. W., & Navathe, A. S. (2021). A machine learning
+approach to identify distinct subgroups of veterans at risk for hospitalization
+or death using administrative and electronic health record data. Plos One,
+16 (2), e0247203.\\
+\\
+Polley, E. C., & Van der Laan, M. J. (2010). Super learner in prediction.\\
+\\
+Shmatko, A., Jung, A. W., Gaurav, K., Brunak, S., Mortensen, L. H., Birney,
+E., Fitzgerald, T., & Gerstung, M. (2025). Learning the natural history of
+human disease with generative transformers. Nature, 1–9.\\
+\\
+Su, X., Tsai, C.-L., Wang, H., Li, B., & others. (2009). Subgroup analysis via
+recursive partitioning. Journal of Machine Learning Research, 10 (2).\\
+\\
+Vaswani, A., Shazeer, N., Parmar, N., Uszkoreit, J., Jones, L., Gomez, A. N.,
+Kaiser, Ł., & Polosukhin, I. (2017). Attention is all you need. Advances in
+Neural Information Processing Systems, 30.\\
+\\
+Wani, A. A. (2024). Comprehensive analysis of clustering algorithms: exploring
+limitations and innovative solutions. Peerj Computer Science, 10, e2286.\\
+\\
+Wright, M. N., Kusumastuti, S., Mortensen, L. H., Westendorp, R. G., & Gerds,
+T. A. (2021). Personalised need of care in an ageing society: The making
+of a prediction tool based on register data. Journal of the Royal Statistical
+Society Series a: Statistics in Society, 184 (4), 1199–1219.
+#+OPTIONS: toc:nil
+#+LATEX: \noindent

@@ -1,0 +1,121 @@
+#+TITLE: The Super Learner
+#+Author: Hjalte Søberg Mikkelsen
+#+Latex_header:\institute{Steno Diabetes Center Copenhagen}
+#+DATE: 23-04-2026
+#+EMAIL:hmik0048@ghost
+#+LaTeX_HEADER: \subtitle{}
+#+setupfile:~/emacs-genome/snps/org-templates/setup-beamer.org
+* Introduction
+
+*** Problem
+We want to use variables ,$W$, from the registers to predict the risk of getting diagnosed with type 2 diabetes, $Y$ ($Y = 1$ means the person has T2D). To do this we need to find some function $\psi_0(W) = P(Y = 1)$. \newline
+\newline
+\pause
+How do we find this function?
+
+
+*** Super leaner
+Assume we have the data $X_i = (W_i,Y_i)$, $i = 1,...,n$, where $W_i$ is a p-dimensional set of covariates and $Y_i$ is the outcome of interest.\pause  Also assume we are given a library of learners $\mathcal{L} = (\psi_1(W),...,\psi_K(W))$ containing $K$ learners.\pause The super learner algorithm will then find the function that minimizes the expectation of some loss- or score-function:
+#+begin_export latex
+\begin{align*}
+\psi_0(W) = \arg\min_{\psi\in\mathcal{L}}E[L(X,\psi(W))],
+\end{align*}
+#+end_export
+where the loss function $L$ is usually the squared loss $L = (Y-\psi(W))^2$. This is done by using cross validation. 
+
+
+*** 10 fold crossvalidation
+#+ATTR_ORG: :width 600
+#+ATTR_HTML: :width 100% :align center
+#+ATTR_LATEX: :width \linewidth
+[[~/PhD-Project/Project_wp2_riskprediction/super_learner_presentation/10foldcrossval.png]]
+
+
+*** The discrete super learner
+Picks the best performing model contained in the library.
+
+- Pros:
+  + All theoretical results shown by van der Laan and Polley holds \pause
+  + Can perform aswell as the oracle estimator \pause
+  + Performs well in practise\pause
+  + Low runtime\pause
+
+- Cons:
+  + Not as fancy as the ensemble learner
+
+
+*** The ensemble super learner
+Combines all the learners in the library to create a new "super" learner.
+
+- Pros:
+  + Fancy \pause
+  + Usually outperforms the discrete superlearner during training \pause
+
+- Cons:
+  + No theoretical results \pause
+  + Can never be the best learner \pause
+  + Doesnt perform well in practise \pause
+  + Crazy bad runtime
+    
+*** Evaluate the model
+Normally shown by discrimination- and calibration-plots, and measured by the AUC and the Brier-score, but on what data?\pause
+#+ATTR_ORG: :width 600
+#+ATTR_HTML: :width 100% :align center
+#+ATTR_LATEX: :width \linewidth
+[[~/PhD-Project/Project_wp2_riskprediction/super_learner_presentation/crossval.png]]
+
+
+
+*** Performance measures: AUC
+Measures discrimination, i.e. how good is the model to discriminate between a person who gets diabetes and a person who doesnt. The AUC for a model is the probability of the model, given a random person who gets T2D and a random person who doesnt, to give the T2D person a higher risk. 
+#+ATTR_ORG: :width 600
+#+ATTR_HTML: :width 100% :align center
+#+ATTR_LATEX: :width \linewidth
+[[~/PhD-Project/Project_wp2_riskprediction/super_learner_presentation/AUC_threshhold.png]]
+\pause
+\newline
+Alot of articles use this as a standalone measure (bad). Show examples from google
+\newline
+\pause
+Go to https://developers.google.com/machine-learning/crash-course/classification/roc-and-auc for an interactive display of the AUC
+
+*** AUC plots
+#+ATTR_ORG: :width 600
+#+ATTR_HTML: :width 50% :align center
+#+ATTR_LATEX: :width 100
+[[~/PhD-Project/Project_wp2_riskprediction/super_learner_presentation/AUC_worst.png]]
+
+#+ATTR_ORG: :width 600
+#+ATTR_HTML: :width 50% :align center
+#+ATTR_LATEX: :width 100
+[[~/PhD-Project/Project_wp2_riskprediction/super_learner_presentation/AUC_perfect.png]]
+
+
+*** AUC plots
+#+ATTR_ORG: :width 600
+#+ATTR_HTML: :width 50% :align center
+#+ATTR_LATEX: :width \linewidth
+[[~/PhD-Project/Project_wp2_riskprediction/super_learner_presentation/AUC_middle.png]]
+
+
+*** AUC plots
+#+ATTR_ORG: :width 600
+#+ATTR_HTML: :width 50% :align center
+#+ATTR_LATEX: :width 100
+[[~/PhD-Project/Project_wp2_riskprediction/super_learner_presentation/AUC_lessthan50.png]]
+
+
+*** Performance measures: Brier-score
+Measure overall performance of a prediction model, and can be used as a standalone measure as it is a theoretical proper measure.
+#+begin_export latex
+\begin{align*}
+BS = \frac{1}{n}\sum_{i = 1}^n(\psi_0(W_i)-Y_i)^2
+\end{align*}
+#+end_export
+
+
+
+*** Calibration plots
+Calibration in the large refers to if the model average predicted probability is the same as the observed average probability of the outcome.
+\newline
+Calibration in the small refers to if the predicted probabilites match the observed probabilites, i.e. 25% of the people who get a prediction of 25% should get the event. 

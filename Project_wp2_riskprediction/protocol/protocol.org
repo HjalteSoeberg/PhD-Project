@@ -1,0 +1,93 @@
+* Intro
+
+
+
+* Models
+
+Keep this in mind for the models
+- What is the application of the different models?
+- What are the limitations of the different models?
+- Which (future) health challenges can the models each (help) solve?
+
+** Register model
+Used on as broad of a population as possible and will be used to see T2D risk trends in Denmark/municipalities in the comming years.
+
+Make a prediction model where municipalities can see how T2D trends in their municipality and which people that are most likely to get T2D. They can then make a prevention strategy targeting those people. This model would be used to see how the trend of T2D developes in Denmark.
+
+######Hvordan ser diabetes byrden ud om 5 år? Prædektiv Bendix. Regression model with calender year as a variable, which will allow us to predict incidence/prevelance/etc in the future.######
+######Kig på pandemi metoder (corona modellering metoder). Kig på diabetes atlas for fremskrivninger.
+
+*** Time 0 and when a person is included
+We need some data to train the super learner on, and some data which we will use to test the performance of the model on. For this we need to choose a time 0 and when a person is included in the data
+
+I have set time0 to 2015-01-01 (can easily be changed in the code ), as we want 5 years follow up and want to be able to test the trained model on future data which also have 5 years of followup. This means our training data is from 2015-01-01 to 2019-12-31 and our test data is from 2020-01-01 to 2024-12-31. Both the training and test set contain covariate data which is before time0. How much before depends on the covariate (can easily be changed in the code).
+
+people who have a diabetes diagnonses, are dead or have emigrated (or "forsvundet") before time0 are excluded from the dataset.
+
+Only people who have lived in Denmark for at least a year before time0 is included
+
+The events are 0 = "Udvandret" eller "Forsvundet", 1 = T2D from dmreg and 2 = death
+
+*** Artificial censoring between train and test data
+
+The train data needs to be artificially censored before the start of the test data, otherwise our setup wouldnt mimic the real world use, i.e. when we build our model on all the data, we don't have followup after the end of the test data.
+
+This means that all events happening after 5 years from time0 will be set to 0 and the time variable will be set to 5.
+
+
+*** Variables
+Include all obvious variables from the registries, which so far is:
+
+sex (100%), age (100%), ethnicity (99.7%), municipality, civil_status (100%), Highest_education (98.2%), family_diabetes (68.4%), income_quartile (99.98%), income_binary (99.98%), blood_pressure_lowering_drugs, lipid_lowering_drugs, family_income_quartile (99.98%), region (99.98%), parent_diabetes (69%). I have also included transformations of some of the variables, for example made family_diabetes2 which is a binary version of the original.
+() is percent non-missing
+
+Need help with using biomarkers, medicin prescriptions and diagnosis - which ones are important and how to include them.
+
+Biomarkers so far are: hba1c (20.5%), HDL_cholesterol (20.2%), LDL_chol (19.9%), total_chol (20.7%), triglycerid (20.1%), (eGFR (31.4%)), uACR (3.5%)
+() is percent non missing measurement, based on 2015 data. Measurements are allowed to be a maximum of 1 year old. Latest measuremnt is used.
+
+
+** Pregananent women (WP4)
+Will be used for wp4 in DP-Next. Will be used on either pregnant women or women who have just given birth (wait for Daniel to write protocol) to find the women with the highest risk of T2D, who wp4 then will target for their intervention strategy.
+
+Use all standard covariates as well as BMI under pregnancy, hba1c before or at first checkup (wait for protocol), and maybe GDM (wait for protocol) (could be past GDM from eailer pregnancy), number of earlier pregnancy. 
+BMI is selfreported as BMI right before getting pregnant
+
+All the wait for protocol stuff is because I don't know yet if the prevention strategy is targeting pregnant women or women who have just given birth.
+
+
+#### Look at what data is availeble for each gestational week (hba1c is very important), i.e. see how old the latest measurement of hba1c is for each gestational week.
+
+#### Find pregnant women by using nakkefoldsscanning
+
+#### Very young population, so T2D prevalence/indcidence maybe very low
+
+
+*** Time 0 and when a person is included
+So far include all women who have given birth and also try to find women at the start of pregnancy (look in sssy for this). One person can be in the data multiple times, one for each pregnancy. 
+
+####When they get pregnant. Find preganant women who are at the latest at first trimester. Probably wait for protocol
+
+
+** Individual model
+
+A model which will be used in general practise as a screening tool, such that patients with a high risks will get a hba1c meaurement (maybe) or will be offered more regular checkups. 
+
+Make a prediction model where practitional doctors can look people up to see which people that have a high risk of diabetes and may need to get a hba1c measurement. There have already been talks/studies where they would screen everybody over a certain age for hba1c, and this model will be able to narrow this done.
+
+- A model used for the practitional doctors needs specific variables and also use a specific population, fx the model wouldnt make sense to train on people who never visit the doctor!
+
+*** Time 0 and when a person is included
+
+time0 and inclusion criteria is the same as the registry model, except some extra stuff. We need to exclude all people who never visits the doctor, and mabe some more due to available covariates.
+
+
+*** Artificial censoring
+Still need to censor people right before the start of the test data.
+
+*** Variables
+Only uses variables which a practioner has access to.
+
+Use https://www.thelancet.com/journals/landig/article/PIIS2589-7500(25)00150-5/fulltext?dgcid=raven_jbs_aip_email "Detection of young-onset type 2 diabetes using deep learning across primary and secondary care: a nationwide, retrospective cohort study" as inspiration. The method and conclusion is meh, but the variables should be good as they are chosen by practitioners.
+
+

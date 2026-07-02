@@ -1,0 +1,8 @@
+*** Index of project WP2 Risk prediction
+:PROPERTIES:
+:ProjectStart: <2026-02-04 Wed 08:11>
+:END:
+
+
+- Finish the project plan
+- Make a feasability study using the play-data

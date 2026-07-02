@@ -1,0 +1,187 @@
+* Objective
+Make a risk prediction model that estimates the 5 years risk of getting diagnosed with T2D for each individual in the danish registers. The model is to be built on only danish registry data and will include all people in the registries that are between the ages 30 and 80, have lived in Denmark for at least a year, don't have diabetes and are not dead.
+
+This model will be used to... ideas:
+Make a prediction model where municipalities can see how T2D trends in their municipality and which people that are most likely to get T2D. They can then make a prevention strategy targeting those people. This model would be used to see how the trend of T2D in Denmark.
+
+Make a prediction model where practitional doctors can look people up to see which people that have a high risk of diabetes and may need to get a hba1c measurement. There have already been talks/studies where they would screen everybody over a certain age for hba1c, and this model will be able to narrow this done.
+
+
+
+
+* Plan
+
+** Make descriptive statistics over varialbes in each registry
+
+I need to make descriptive statistics over the variables in each regristry (one registry at a time).
+
+** Need to know exactly what the model will used for
+Two ideas:
+- Make a prediction model where municipalities can see how T2D trends in their municipality and which people that are most likely to get T2D. They can then make a prevention strategy targeting those people. This model would be used to see how the trend of T2D in Denmark. So this wouldnt be used on an individual but on the whole population simulataniously (the output is still individual though)
+
+- Make a prediction model where praktiserende læger can look people up to see which people that have a high risk of diabetes and may need to get a hba1c measurement. There have already been talks/studies where they would screen everybody over a certain age for hba1c.
+  + A model used for the practitional doctors needs specific variables and also use a specific population - the model wouldnt make sense to train on people who never visit the doctor!
+
+The WP2 protocol states the following:
+"The aim of WP2 is to develop an operational risk model that calculates an individual diabetes risk prediction for the entire population of Denmark, Greenland and the Faroe Islands."
+and
+"Once a suitable risk prediction model has been established, the objective is to use it to describe the state and temporal development of diabetes risk in Denmark, Greenland and the Faroe Islands. This analysis can include subdivisions at the level of regions/municipalities. It can furthermore include an analysis of the relative contribution of broad groups of risk factors to the state and trends in diabetes risk.".
+(This is what the delphi-2M does, It models future disease rates and they analyze which clusters of variables are the most important. They do however note in the article that the model performance is bad for diabetes in particular)
+
+
+
+** Test the feasability of the idea
+
+We need to test if this even makes sense to do, i.e. can we use registry data to predict the risk of getting diagnosed with T2D. This will be done by creating a play-dataset on some older data which will not be used when building the model (data from 1996-2006). Doing this step I will also build some of the modeling framework and pick some of the models which will be included in the super learner. This will speed up the next steps.
+
+The variables choosen for the play data is not that important, as we don't have access to alot of the variables that would be in the train/test data anyways.
+
+** Make train and test data
+
+We need some data to train the super learner on, and some data which we will use to test the performance of the model on. For this we need to choose a time 0 and when a person is included in the data
+
+*** Time 0 and when a person is included
+
+I have set time0 to 2015-01-01 (can easily be changed in the code ), as we want 5 years follow up and want to be able to test the trained model on future data which also have 5 years of followup. This means our training data is from 2015-01-01 to 2019-12-31 and our test data is from 2020-01-01 to 2024-12-31. Both the training and test set contain covariate data which is before time0. How much before depends on the covariate (can easily be changed in the code).
+
+people who have a diabetes diagnonses, are dead or have emigrated (or "forsvundet") before time0 are excluded from the dataset.
+
+Only people who have lived in Denmark for at least a year before time0 is included
+
+The events are 0 = "Udvandret" eller "Forsvundet", 1 = T2D from dmreg and 2 = death
+
+*** Artificial censoring
+
+The train data needs to be artificially censored before the start of the test data, otherwise our setup wouldnt mimic the real world use, i.e. when we build our model on all the data, we don't have followup after the end of the test data.
+
+This means that all events happening after 5 years from time0 will be set to 0 and the time variable will be set to 5.
+
+*** Covariates and registries
+
+**** hba1c + other biomarkers (lab dm forsker lev1.parquet)
+
+Maximum measurement age: Rightnow it is set to 5 years, so measuments need to be taken before time0 = 2015-01-01 and after time0-5years = 2010-01-01
+
+The variables I get now are:
+- hba1c
+- total chol
+- LDL chol
+- HDL chol
+- Triglycerid
+- uACR
+- egfr
+
+I have both their value in some unit, and in categories. This should be changed to 'have measurement'/'no measurement' for at least hba1c. Should this be done for others?
+
+
+**** Lipid lowering drugs and blood presure lowering drugs (lmdb)
+Maximum measurement age: Rightnow it is set to 5 years, so measuments need to be taken before time0 = 2015-01-01 and after time0-5years = 2010-01-01
+
+The variables I get now are:
+- lipid lowering drugs (C10)
+- blood presure lowering drugs (C02, C03, C07, C08, C09)
+
+
+Both are 0/1 vairables indicating if the person has ever taken the drug in the defined timespan.
+
+
+**** region (bef)
+
+Variable: region
+
+What region the person lives at time0 (latest entry before time0)
+
+
+**** mom diabetes and dad diabetes (bef and dmreg)
+
+
+variables:
+- mom diabetes
+- dad diabetes
+
+
+0/1 variable, indicating if the persons mom/dad have a diabetes diagnosis. Should NA's be 0 or a third option indicating 'dont know'?
+NOTE: NA's only occur if we can't find the parents in the registers. 0's are if we can find the parent in bef and they are not in dmreg.
+
+
+**** Family income (bef and faik)
+
+Right now only latest value, but maybe it should be a 5 year average?
+
+variables:
+- family income (comes from FAMAEKVIVADISP 13)
+
+
+Right now just the raw value from the registry, but probably should be made categorical
+
+
+**** Highest education (uddf202409)
+
+The highest education achieved before time0
+
+variables
+- highest education (HFAUDD)
+
+
+Right now the variable is still in codes, and needs to be made into categories but dont know how.
+
+
+**** personal income data (ind)
+
+Right now only latest value before time0, but maybe it should be a 5 year average?
+
+variables:
+- BESKST13: categorical (Where main source of income is from i.e. employed, retired...)
+- DISPON 13: numeric (income after taxes + rent value of house/apartment)
+- FORMREST NY05: numeric (Nettorestformue eskl. pensions formue)
+- PERINDKIALT 13: numeric (Total income without rent value of house/apartment)
+- PER SOCIO: categorical (Socioøkonomisk klassifikation)
+
+
+Right now all the categorical varialbes are still in their original categories from the registry. Dont know which variable/'s to choose???
+
+
+**** Sygesikring data (sssy)
+
+Can either be if the person has been to the doctor in the last n years, or how many time a person has been to the doctor in n years.
+
+Should the number in YDLANT be added to "how many times a person has been to the doctor"?
+
+
+**** ADD CIVIL STATUS
+
+**** ADD ETHNICITY
+
+
+
+
+* Descriptive statistics
+
+** events
+In the training data (2015-01-01 to 2019-12-31) there is an average per year of: 16717 new diagnosis of T2D, 22373.8 deaths and 8456 censored observations (not including censoring at the end of followup)
+In the test set (2020-01-01 to 2024-12-31) there is an average per year of 19566.8 new diagnosis of T2D, 22776.4 deaths and 9423.8 censored observations (not including censoring at the end of followup)
+
+
+
+** DMreg / diabetes
+There is an average of 21487.4 per year new diagnosis of T2D between the dates 2015-01-01 and 2024-12-31 for the whole danish population.
+
+
+
+* Modeling strategy
+
+** Play
+
+This data is from 1996-2005 and will be used to get to know the data, building the modeling framework and choosing which models will be in the super learner.
+
+Does this data need to be artificially censored at the end of 2005???
+
+Also need to simulate data based on the play data, such that I can work with it outside of DST.
+
+** Training and testing the model
+
+Based on the findings from the play data, I will build a discrete super learner on the train data using 10-fold crossvalidation. The winning model (i.e. the discrete superleaner) together with some benchmark model, will the be build on all the training data and their perfomance will be tested on the test data. 
+
+** Will the model be better with newer data, and how to do it?
+
+Say we build a model on data from 2015-2019 and test it on data from 2021-2025. We now want to test if adding more data improves the predictions. This can be tested in two ways - one where we add data from 2016-2020 to the train data (may be a problem because of overlapping of people) or we can add a years more followup to the train data assuming we have artificilly censored train data before hand (this will only change the baseline hazards). 
