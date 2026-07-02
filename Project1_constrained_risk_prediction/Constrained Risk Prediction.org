@@ -1,6 +1,0 @@
-*** Index of project Constrained Risk Prediction
-:PROPERTIES:
-:ProjectStart: <2026-02-04 Wed 08:14>
-:END:
-
-- Try 
