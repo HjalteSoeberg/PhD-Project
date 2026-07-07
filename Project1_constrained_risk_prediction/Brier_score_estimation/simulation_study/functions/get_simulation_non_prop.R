@@ -11,12 +11,8 @@ get_simulation_non_prop <- function(n,N,tau){
     BS <- c()
     logi <- c()
     cscc <- c()
-    BS_beta <- c()
     for (k in 1:N){
         tryCatch({
-            ## d <- sim_cox_exp(n)
-            ## d <- sim_dpnext(n)
-            ## d <- sim_cox_weibull(n)
             d <- sim_non_prop_haz(n)
             d[,':='(y1 = 0, y2 = 0)]
             d[event == 1 & times <= tau, y1 := 1]
@@ -56,17 +52,13 @@ get_simulation_non_prop <- function(n,N,tau){
                               )
             par_LL <- c(fit_LL_1$par[1],fit_LL_2$par[1],exp(fit_LL_1$par[2]),exp(fit_LL_2$par[2]))
             LL <- append(LL,BrierScore(data = d_test,parms = par_LL, T = tau))                     
-            BS_fit <- optim(par = start, fn = BrierScore, data = d_train, T = tau, method = "BFGS", control = list(maxit = 1000))
-            BS <- append(BS, BrierScore(data = d_test, parms = BS_fit$par, T = tau))
-
-            BS_fit_beta <- optim(par = c(0,0), fn = BrierScore_beta, lambdas = start[3:4],data = d_train, T = tau, method = "BFGS", control = list(maxit = 1000))
-            BS_beta <- append(BS_beta, BrierScore(data = d_test, parms = c(BS_fit_beta$par,start[3:4]), T = tau))                      
-
+            BS_fit <- BSS(data = d_train, formula = Hist(times,event)~X, tau = tau)
+            BS <- append(BS, BrierScore_multi(data = d_test, parms = BS_fit$par, T = tau, covariates = c("X")))                      
             ## true <- append(true,BrierScore(data = d_test, parms = as.numeric(c(start[1:2],exp(start[3:4]))), T = tau))
         }, error = function(e){})
     }
-    df <- data.table(Model = c("logistic", "CSC", "Likelihood","Brier","Brier_beta"),
-                     Mean = c(100*mean(logi), 100*mean(cscc), 100*mean(LL), 100*mean(BS), 100*mean(BS_beta)))
+    df <- data.table(Model = c("logistic", "CSC", "Likelihood","Brier"),
+                     Mean = c(100*mean(logi), 100*mean(cscc), 100*mean(LL), 100*mean(BS)))
     setkey(df,Mean)
     df[]
 }

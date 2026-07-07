@@ -11,15 +11,23 @@ tar_option_set(
 tar_source("functions")
 # tar_source("other_functions.R") # Source other scripts as needed.
 
+
+
 ### targets
 #tar_map to vary coeffecients
 list(
     #
     ## Sim setup 1
     #
-    tar_target(
+    tar_target(# vary true_pars with tar map. Save true_pars in tabel.
+        # Vary n to see if the Mean_diff vanishes.
+        # Vary number of covariates, also include categorical
+        # (Maybe fix number of covariates and just vary effects).
+        # Also show it for censored data. Vary tau.
+        # Do the same where the model is wrong (for example exp(beta*X^2).
+        # Performance could be true probability for 5 different people vs predicted prob.
         name = does_BS_find_correct_pars,
-        command = get_does_BS_find_correct_pars(n = 5000,N = 20,tau = 2)
+        command = get_does_BS_find_correct_pars(n = 5000,N = 20,tau = 2) # N should be larger (some say 10.000)
     ),
     tar_target(
         name = simulation_cox_exp,
@@ -50,10 +58,10 @@ list(
     ),
     # With censoring
     tar_map(
-        list(tau = c(1,3,4,5)),
+        list(tau = c(0.5,1,1.5,2)),
         tar_target(
             name = simulation_non_prop_cens,
-            command = get_simulation_non_prop_cens(n = 300,N = 40,tau = tau, C = 0.3)
+            command = get_simulation_non_prop_cens(n = 1000,N = 40,tau = tau, C = 0.3)
         )
     ),
     #

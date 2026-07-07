@@ -1,7 +1,7 @@
 get_does_BS_find_correct_pars <- function(n,N,tau){
     if (FALSE){
         tar_load_globals()
-        n = 300
+        n = 1000
         N = 10
         tau = 2
     }
@@ -50,9 +50,9 @@ get_does_BS_find_correct_pars <- function(n,N,tau){
             LL_beta2 <- append(LL_beta2,fit_LL_2$par[1])
             LL_lambda01 <- append(LL_lambda02,exp(fit_LL_1$par[2]))
             LL_lambda02 <- append(LL_lambda02,exp(fit_LL_2$par[2]))
-            fit_BS <- optim(par = start, fn = BrierScore, data = d, T = tau, method = "BFGS", control = list(maxit = 1000))
-            ## Estimates on the original lambda scale
-            theta_hat <- fit_BS$par
+            ## BSE
+            BS_fit <- BSS(data = d, formula = Hist(times,event)~X, tau = tau)
+            theta_hat <- BS_fit$true_pars
             BS_beta1 <- append(BS_beta1,theta_hat[1])
             BS_beta2 <- append(BS_beta2,theta_hat[2])
             BS_lambda01 <- append(BS_lambda02,theta_hat[3])
@@ -62,11 +62,11 @@ get_does_BS_find_correct_pars <- function(n,N,tau){
     
     df1 <- data.table(Model = "Brier",
                       Parameter = c("Beta1","Beta2", "lambda01", "lambda02"),
-                      Mean_Diff = c(abs(mean(BS_beta1)-start[1]),abs(mean(BS_beta2)-start[2]),abs(mean(BS_lambda01)-start[3]),abs(mean(BS_lambda02)-start[4])),
+                      Mean_Diff = c(abs(mean(BS_beta1)-true_pars[1]),abs(mean(BS_beta2)-true_pars[2]),abs(mean(BS_lambda01)-true_pars[3]),abs(mean(BS_lambda02)-true_pars[4])),
                       SD = c(sd(BS_beta1),sd(BS_beta2),sd(BS_lambda01),sd(BS_lambda02)))
     df2 <- data.table(Model = "Likelihood",
                       Parameter = c("Beta1","Beta2", "lambda01", "lambda02"),
-                      Mean_Diff = c(abs(mean(LL_beta1)-start[1]),abs(mean(LL_beta2)-start[2]),abs(mean(LL_lambda01)-start[3]),abs(mean(LL_lambda02)-start[4])),
+                      Mean_Diff = c(abs(mean(LL_beta1)-true_pars[1]),abs(mean(LL_beta2)-true_pars[2]),abs(mean(LL_lambda01)-true_pars[3]),abs(mean(LL_lambda02)-true_pars[4])),
                       SD = c(sd(LL_beta1),sd(LL_beta2),sd(LL_lambda01),sd(LL_lambda02)))
     df <- rbind(df1,df2)
     df[]

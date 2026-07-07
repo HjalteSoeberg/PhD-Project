@@ -1,0 +1,9 @@
+* Goal
+We want to make a model based on registry data that can predict the 10 year risk of getting T2D for women without diabetes (they are allowed to have gestational diabetes) who have just given birth, and who have lived in Denmark for X years. The goal of this model is to find the women with the highest risk of T2D in the danish population, such that a prevention strategy can be made based on their charachtaristics.
+
+* play/train/test data
+To make this model we need to have some training/test data, which needs atleast 10 years of followup. For this we use all data between 2010-2015, and can for example use 2014-2015 and 2010-2013 as training. All the data before 2010 will be our playdata, which we will use to do variable selection, i.e. find the most predictive icd and atc codes/groups of codes (f.eks. by doing a Manhatten plot). The playdata will also be used to pick which models will be included in the super learner during the training step.
+
+* Find highest risk women / find highest risk subgroups
+Our model can either be used to find the individual women with the highest risk of T2D, or it can be used to find the combination of covariate values which will produce the highest risk.
+

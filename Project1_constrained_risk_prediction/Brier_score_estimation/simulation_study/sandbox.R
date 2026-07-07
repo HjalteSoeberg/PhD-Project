@@ -81,3 +81,14 @@ BS_fit <- BSS(data = df, formula = Hist(times,event)~x, tau = max(times))
 probs <- F_multi(t = max(times), X = mean(df$x), beta1 = BS_fit$true_pars[1], beta2 = BS_fit$true_pars[2], lambda1 = BS_fit$true_pars[3], lambda2 = BS_fit$true_pars[4])
 probs[1]+probs[2]
 
+
+
+##############################
+
+
+
+
+
+
+
+

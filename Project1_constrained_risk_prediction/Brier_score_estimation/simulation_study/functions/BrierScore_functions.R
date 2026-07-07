@@ -522,81 +522,83 @@ BrierScore_cens <- function(parms, data, T = 1, BS = "both"){
     }   
 }
 
-BrierScore_cens_beta <- function(parms, data, lambdas, T = 1, BS = "both"){
-    df <- data
-    beta1 <- parms[1]
-    beta2 <- parms[2]
-    beta3 <- parms[3]
-    lambda1 <- lambdas[1]
-    lambda2 <- lambdas[2]
-    lambda3 <- lambdas[3]
-    BS1 <- 0
-    BS2 <- 0
-    BS3 <- 0
-    for (i in 1:nrow(df)){
-        if (T >= df$times[i]){
-            if (df$event[i] == 1){
-                o1 <- 1
-                o2 <- 0
-                o3 <- 0
-            }
-            if (df$event[i] == 2){
-                o1 <- 0
-                o2 <- 1
-                o3 <- 0
-            }
-            if (df$event[i] == 0){
-                o1 <- 0
-                o2 <- 0
-                o3 <- 1
-            }                
-        } else{
-            o1 <- 0
-            o2 <- 0
-            o3 <- 0
-        }
-        BS1 <- BS1 + (F_cens(t = T,X = df$X[i], beta1 = beta1, beta2 = beta2, beta3 = beta3, lambda1 = lambda1, lambda2 = lambda2, lambda3 = lambda3)[1] - o1)^2
-        BS2 <- BS2 + (F_cens(t = T,X = df$X[i], beta1 = beta1, beta2 = beta2, beta3 = beta3, lambda1 = lambda1, lambda2 = lambda2, lambda3 = lambda3)[2] - o2)^2
-        BS3 <- BS3 + (F_cens(t = T,X = df$X[i], beta1 = beta1, beta2 = beta2, beta3 = beta3, lambda1 = lambda1, lambda2 = lambda2, lambda3 = lambda3)[3] - o3)^2
-    }
-    if (BS == "both"){
-        return((BS1+BS2+BS3)/nrow(df))
-    }
-    if (BS == "BS1"){
-        return((BS1)/nrow(df))
-    }
-    if (BS == "BS2"){
-        return((BS2)/nrow(df))
-    }
-    if (BS == "BS3"){
-        return((BS3)/nrow(df))
-    }   
-}
+## BrierScore_cens_beta <- function(parms, data, lambdas, T = 1, BS = "both"){
+##     df <- data
+##     beta1 <- parms[1]
+##     beta2 <- parms[2]
+##     beta3 <- parms[3]
+##     lambda1 <- lambdas[1]
+##     lambda2 <- lambdas[2]
+##     lambda3 <- lambdas[3]
+##     BS1 <- 0
+##     BS2 <- 0
+##     BS3 <- 0
+##     for (i in 1:nrow(df)){
+##         if (T >= df$times[i]){
+##             if (df$event[i] == 1){
+##                 o1 <- 1
+##                 o2 <- 0
+##                 o3 <- 0
+##             }
+##             if (df$event[i] == 2){
+##                 o1 <- 0
+##                 o2 <- 1
+##                 o3 <- 0
+##             }
+##             if (df$event[i] == 0){
+##                 o1 <- 0
+##                 o2 <- 0
+##                 o3 <- 1
+##             }                
+##         } else{
+##             o1 <- 0
+##             o2 <- 0
+##             o3 <- 0
+##         }
+##         BS1 <- BS1 + (F_cens(t = T,X = df$X[i], beta1 = beta1, beta2 = beta2, beta3 = beta3, lambda1 = lambda1, lambda2 = lambda2, lambda3 = lambda3)[1] - o1)^2
+##         BS2 <- BS2 + (F_cens(t = T,X = df$X[i], beta1 = beta1, beta2 = beta2, beta3 = beta3, lambda1 = lambda1, lambda2 = lambda2, lambda3 = lambda3)[2] - o2)^2
+##         BS3 <- BS3 + (F_cens(t = T,X = df$X[i], beta1 = beta1, beta2 = beta2, beta3 = beta3, lambda1 = lambda1, lambda2 = lambda2, lambda3 = lambda3)[3] - o3)^2
+##     }
+##     if (BS == "both"){
+##         return((BS1+BS2+BS3)/nrow(df))
+##     }
+##     if (BS == "BS1"){
+##         return((BS1)/nrow(df))
+##     }
+##     if (BS == "BS2"){
+##         return((BS2)/nrow(df))
+##     }
+##     if (BS == "BS3"){
+##         return((BS3)/nrow(df))
+##     }   
+## }
 
 ### Brier-Score for multiple variables
 F_multi <- function(t, X, beta1, beta2, lambda1, lambda2) {
-    # Ensure X is a matrix
     X <- as.matrix(X)
-    # Linear predictors
     lp1 <- as.vector(X %*% beta1)
     lp2 <- as.vector(X %*% beta2)
     haz1 <- exp(lp1) * lambda1
-    haz2 <- exp(lp2) * lambda2  
+    haz2 <- exp(lp2) * lambda2
     numerator <- 1 - exp(-t * (haz1 + haz2))
-    denominator <- haz1 + haz2  
-    F1 <- haz1 * (numerator / denominator)
-    F2 <- haz2 * (numerator / denominator) 
+    denominator <- haz1 + haz2
+    F1 <- haz1 * numerator / denominator
+    F2 <- haz2 * numerator / denominator 
     cbind(F1 = F1, F2 = F2)
 }
-BrierScore_multi <- function(parms, data, covariates, T, BS = "both") {
+BrierScore_multi <- function(parms, data, formula, T, BS = "both") {
     df <- data
-    p <- length(covariates)
+    # Build design matrix from formula
+    X <- model.matrix(delete.response(terms(formula)), data = df)
+    # Remove intercept if present
+    if ("(Intercept)" %in% colnames(X)) {
+        X <- X[, colnames(X) != "(Intercept)", drop = FALSE]
+    }  
+    p <- ncol(X)
     beta1 <- parms[1:p]
     beta2 <- parms[(p + 1):(2 * p)]
-    # Reparamitize lambda
     lambda1 <- exp(parms[2 * p + 1])
     lambda2 <- exp(parms[2 * p + 2])
-    X <- as.matrix(df[, ..covariates])
     pred <- F_multi(
         t = T,
         X = X,
@@ -604,52 +606,211 @@ BrierScore_multi <- function(parms, data, covariates, T, BS = "both") {
         beta2 = beta2,
         lambda1 = lambda1,
         lambda2 = lambda2
-    )
+    )  
     o1 <- ifelse(T >= df$times & df$event == 1, 1, 0)
-    o2 <- ifelse(T >= df$times & df$event != 1, 1, 0)
+    o2 <- ifelse(T >= df$times & df$event != 1, 1, 0)  
     BS1 <- mean((pred[, "F1"] - o1)^2)
-    BS2 <- mean((pred[, "F2"] - o2)^2)
-    if (BS == "both") {
-        return(BS1 + BS2)
-    }
-    if (BS == "BS1") {
-        return(BS1)
-    }
-    if (BS == "BS2") {
-        return(BS2)
-    }  
+    BS2 <- mean((pred[, "F2"] - o2)^2)  
+    if (BS == "both") return(BS1 + BS2)
+    if (BS == "BS1") return(BS1)
+    if (BS == "BS2") return(BS2)  
     stop("BS must be one of: 'both', 'BS1', or 'BS2'")
 }
-
-BSS <- function(data, formula,tau){
-    covariates <- all.vars(formula[[3]])
-    # fit csc
-    csc <- CSC(data = data, formula)
+BSS <- function(data, formula, tau) {
+    df <- data
+    # Model matrix handles factors, interactions, transformations, etc.
+    X <- model.matrix(delete.response(terms(formula)), data = df)
+    if ("(Intercept)" %in% colnames(X)) {
+        X <- X[, colnames(X) != "(Intercept)", drop = FALSE]
+    }
+    design_names <- colnames(X)
+    p <- ncol(X)
+    # Fit cause-specific Cox model
+    csc <- CSC(data = df, formula)
     bh1 <- survival::basehaz(csc$models[[1]], centered = FALSE)
     bh2 <- survival::basehaz(csc$models[[2]], centered = FALSE)
+    lambda1_start <- bh1$hazard[max(which(bh1$time <= tau))] / tau
+    lambda2_start <- bh2$hazard[max(which(bh2$time <= tau))] / tau
     start <- c(
         as.numeric(coef(csc)[[1]]),
         as.numeric(coef(csc)[[2]]),
-        log(bh1$hazard[max(which(bh1$time <= tau))]/tau),
-        log(bh2$hazard[max(which(bh2$time <= tau))]/tau)
+        log(lambda1_start),
+        log(lambda2_start)
     )
-    BS_fit <- optim(par = start, fn = BrierScore_multi, data = data, T = tau, covariates = covariates,method = "BFGS", control = list(maxit = 1000))
-    BS <- BrierScore_multi(parms = BS_fit$par,data = data,covariates = covariates,T = tau,BS = "both")
-    p <- length(covariates)
+    # Safety check
+    if (length(start) != 2 * p + 2) {
+        stop(
+            "Parameter length mismatch. Expected ", 2 * p + 2,
+            " parameters, but got ", length(start), ".\n",
+            "Design matrix columns are: ",
+            paste(design_names, collapse = ", ")
+        )
+    }
+    BS_fit <- optim(
+        par = start,
+        fn = BrierScore_multi,
+        data = df,
+        formula = formula,
+        T = tau,
+        method = "BFGS",
+        control = list(maxit = 1000)
+    )
+    BS <- BrierScore_multi(
+        parms = BS_fit$par,
+        data = df,
+        formula = formula,
+        T = tau,
+        BS = "both"
+    )
     beta1 <- BS_fit$par[1:p]
     beta2 <- BS_fit$par[(p + 1):(2 * p)]
     lambda1 <- exp(BS_fit$par[2 * p + 1])
     lambda2 <- exp(BS_fit$par[2 * p + 2])
     x <- list(
-        "true_pars" = c(BS_fit$par[1:(2*p)],exp(BS_fit$par[(2 * p + 1):(2 * p + 2)])),
-        "pars" = BS_fit$par,
-        "Cause1 pars" = c("beta" = beta1,"lambda" = lambda1),
-        "Cause2 pars" = c("beta" = beta2,"lambda" = lambda2),
-        "Brier Score" = BS)
-    names(x$'Cause1 pars') <- c(covariates,"lambda")
-    names(x$'Cause2 pars') <- c(covariates,"lambda")
+        true_pars = c(
+            BS_fit$par[1:(2 * p)],
+            exp(BS_fit$par[(2 * p + 1):(2 * p + 2)])
+        ),
+        pars = BS_fit$par,
+        `Cause1 pars` = c(beta1, lambda = lambda1),
+        `Cause2 pars` = c(beta2, lambda = lambda2),
+        `Brier Score` = BS,
+        design_matrix_columns = design_names
+    )
+    names(x$`Cause1 pars`) <- c(design_names, "lambda")
+    names(x$`Cause2 pars`) <- c(design_names, "lambda")
     return(x)
 }
+
+# With censoring
+F_multi_cens <- function(t, X, beta1, beta2, beta3,
+                         lambda1, lambda2, lambda3) {
+    X <- as.matrix(X)
+    lp1 <- as.vector(X %*% beta1)
+    lp2 <- as.vector(X %*% beta2)
+    lp3 <- as.vector(X %*% beta3)
+    haz1 <- exp(lp1) * lambda1
+    haz2 <- exp(lp2) * lambda2
+    haz3 <- exp(lp3) * lambda3
+    haz_sum <- haz1 + haz2 + haz3
+    numerator <- 1 - exp(-t * haz_sum)
+    F1 <- haz1 * numerator / haz_sum
+    F2 <- haz2 * numerator / haz_sum
+    F3 <- haz3 * numerator / haz_sum
+    cbind(F1 = F1, F2 = F2, F3 = F3)
+}
+
+BrierScore_multi_cens <- function(parms, data, formula, T, BS = "both") {
+    df <- data
+    X <- model.matrix(delete.response(terms(formula)), data = df)
+    if ("(Intercept)" %in% colnames(X)) {
+        X <- X[, colnames(X) != "(Intercept)", drop = FALSE]
+    }
+    p <- ncol(X)
+    beta1 <- parms[1:p]
+    beta2 <- parms[(p + 1):(2 * p)]
+    beta3 <- parms[(2 * p + 1):(3 * p)]
+    lambda1 <- exp(parms[3 * p + 1])
+    lambda2 <- exp(parms[3 * p + 2])
+    lambda3 <- exp(parms[3 * p + 3])
+    pred <- F_multi_cens(
+        t = T,
+        X = X,
+        beta1 = beta1,
+        beta2 = beta2,
+        beta3 = beta3,
+        lambda1 = lambda1,
+        lambda2 = lambda2,
+        lambda3 = lambda3
+    )
+    o1 <- ifelse(T >= df$times & df$event == 1, 1, 0)
+    o2 <- ifelse(T >= df$times & df$event == 2, 1, 0)
+    o3 <- ifelse(T >= df$times & df$event == 0, 1, 0)
+    BS1 <- mean((pred[, "F1"] - o1)^2)
+    BS2 <- mean((pred[, "F2"] - o2)^2)
+    BS3 <- mean((pred[, "F3"] - o3)^2)
+    if (BS == "both") return(BS1 + BS2 + BS3)
+    if (BS == "BS1") return(BS1)
+    if (BS == "BS2") return(BS2)
+    if (BS == "BS3") return(BS3)
+    stop("BS must be one of: 'both', 'BS1', 'BS2', or 'BS3'")
+}
+
+BSS_cens <- function(data, formula, tau) {
+    df <- data
+    X <- model.matrix(delete.response(terms(formula)), data = df)
+    if ("(Intercept)" %in% colnames(X)) {
+        X <- X[, colnames(X) != "(Intercept)", drop = FALSE]
+    }
+    design_names <- colnames(X)
+    p <- ncol(X)
+    # Copy data and recode censoring as event 3 only for CSC fitting
+    d_train_3 <- data.table::copy(df)
+    d_train_3[event == 0, event := 3]
+    csc <- CSC(data = d_train_3, formula)
+    bh1 <- survival::basehaz(csc$models[[1]], centered = FALSE)
+    bh2 <- survival::basehaz(csc$models[[2]], centered = FALSE)
+    bh3 <- survival::basehaz(csc$models[[3]], centered = FALSE)
+    lambda1_start <- bh1$hazard[max(which(bh1$time <= tau))] / tau
+    lambda2_start <- bh2$hazard[max(which(bh2$time <= tau))] / tau
+    lambda3_start <- bh3$hazard[max(which(bh3$time <= tau))] / tau
+    start <- c(
+        as.numeric(coef(csc)[[1]]),
+        as.numeric(coef(csc)[[2]]),
+        as.numeric(coef(csc)[[3]]),
+        log(lambda1_start),
+        log(lambda2_start),
+        log(lambda3_start)
+    )
+    if (length(start) != 3 * p + 3) {
+        stop(
+            "Parameter length mismatch. Expected ", 3 * p + 3,
+            " parameters, but got ", length(start), ".\n",
+            "Design matrix columns are: ",
+            paste(design_names, collapse = ", ")
+        )
+    }
+    BS_fit <- optim(
+        par = start,
+        fn = BrierScore_multi_cens,
+        data = df,
+        formula = formula,
+        T = tau,
+        method = "BFGS",
+        control = list(maxit = 1000)
+    )
+    BS <- BrierScore_multi_cens(
+        parms = BS_fit$par,
+        data = df,
+        formula = formula,
+        T = tau,
+        BS = "both"
+    )
+    beta1 <- BS_fit$par[1:p]
+    beta2 <- BS_fit$par[(p + 1):(2 * p)]
+    beta3 <- BS_fit$par[(2 * p + 1):(3 * p)]
+    lambda1 <- exp(BS_fit$par[3 * p + 1])
+    lambda2 <- exp(BS_fit$par[3 * p + 2])
+    lambda3 <- exp(BS_fit$par[3 * p + 3])
+    x <- list(
+        true_pars = c(
+            BS_fit$par[1:(3 * p)],
+            exp(BS_fit$par[(3 * p + 1):(3 * p + 3)])
+        ),
+        pars = BS_fit$par,
+        `Cause1 pars` = c(beta1, lambda = lambda1),
+        `Cause2 pars` = c(beta2, lambda = lambda2),
+        `Cens pars` = c(beta3, lambda = lambda3),
+        `Brier Score` = BS,
+        design_matrix_columns = design_names
+    )
+    names(x$`Cause1 pars`) <- c(design_names, "lambda")
+    names(x$`Cause2 pars`) <- c(design_names, "lambda")
+    names(x$`Cens pars`) <- c(design_names, "lambda")
+    return(x)
+}
+
+
 
 
 ######################################################################
