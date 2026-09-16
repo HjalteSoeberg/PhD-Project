@@ -1,0 +1,9 @@
+\frametitle{Competing risks risk prediction}
+\begin{align*}
+F_1(5\mid x)&=P(\text{type 2 diabetes by 5 years}\mid x),\\
+F_2(5\mid x)&=P(\text{death without diabetes by 5 years}\mid x).
+\end{align*}
+
+\begin{center}
+\includegraphics[width=1\textwidth]{risk-plane.pdf}
+\end{center}

@@ -1,0 +1,130 @@
+#+TITLE:
+#+Author: Hjalte Søberg Mikkelsen
+#+Latex_header:\institute{}
+#+DATE: 
+#+EMAIL:hmik0048@ghost
+#+LaTeX_HEADER: \subtitle{}
+#+BIBLIOGRAPHY: bibliography.bib
+#+setupfile:~/emacs-genome/snps/org-templates/setup-beamer.org
+* Introduction
+*** Introduction
+My PhD project is part of a larger project called DP-Next. DP-Next is a project aimed at developing a sustainably effective strategy for prevention of Type 2 Diabetes in Denmark, Greenland and the Faroe Islands.
+\vfill
+My goal is to develope a risk prediction model that can predict the 5 year risk of getting diagnosed with type 2 diabetes and the 5 year risk of death, only using registry data. This model is to be used to select people that will be included in the devolopement of the prevention strategy. 
+
+
+*** Motivation/Setting
+# insert picture of cause specific risks
+# define time0
+When you estimate the cause specific risks at time $\tau$ using semi-parametric Cox regression for the cause specific hazards, the sum of all cause specific risks can be more than 1 for certain covariate values.
+\vfill
+We need to export the prediction model developed in protected environments, such that we can give it to the public.
+\vfill
+# change when 
+It is unclear when to artifical censor subjects at the prediction time horizon.
+
+# Talk about that what this presentation is not about, f.eks. super learner validation etc.
+
+*** COMMENT Contribution
+
+A time-horizon specific estimation method for parametric Cox regression models based on Brier-score
+
+*** Setting: competing risks
+Assume we are in a competing risks scenario and want to predict the risk of getting diagnosed with T2D and the risk of dying, at some fixed timepoint $\tau$. Denote:
+\vfill
+- $T$ as the time between time0 and the date of an event
+- $D\in\{1,2\}$ as the cause of the event
+- $X = (X^1,...,X^p)$ as a p-dimensional vector of baseline covariates, which can both be numeric or categorical.
+\vfill
+Additionally we assume that the event time $T$ is right censored at the random time $C$, where $P(C>\tau\vert X)>0$ almost surely. Denote $\tilde{T} = \min(T,C)$ and $\tilde{D} = \Delta D$ as the observed time and event, where $\Delta = 1\{T\leq C\}$.
+
+*** Setting: Proportional hazards model
+Let $\beta$ be a p-dimensional parameter vector and $x$ be some observed value of $X$. We are interrested in the cumulative incidence function for both causes, which for cause $j$ is $F_j(t|x) = P(T\leq t, D = j|x)$, and can be written as
+#+begin_export latex
+\begin{align*}
+F_j(t|x) = \int_0^t S(s-|x)d\Lambda_j(s|x),
+\end{align*}
+#+end_export
+where $S$ is the survival function
+#+begin_export latex
+\begin{align*}
+S(t|x) = \exp\left(-\sum_{i = 1}^2 \Lambda_i(s|x)\right),
+\end{align*}
+#+end_export
+and $\Lambda_j$ is the cumulative hazard
+#+begin_export latex
+\begin{align*}
+\Lambda_j(t|x) = \exp(x\beta_j)\Lambda_{0j}(t).
+\end{align*}
+#+end_export
+$\Lambda_{0j}$ is the baseline cumulative hazard for cause j, which is defined as $\Lambda_{0j}(t) = \int_0^t \lambda_{0j}(s)ds$, where $\lambda_{0j}$ is the baseline hazard
+
+*** Proportional hazards model estimation
+The typical ways of etimating these kinds of models is to either use partial likelihood, where we assume the baseline hazard is non-parametric, or maximum likelihood, where we need to choose some parametric form for the baseline hazard functions. \pause
+\vfill
+In this project I will choose a parametric form for the baseline hazards, but I will minimize the Brier-score at a fixed timepoint instead of maximizing the likelihood.\pause
+\vfill
+I will throughout the presentation assume that $C$ and $T$ are conditionally independent given $X$.
+
+*** Maximum likelihood
+# this is not the full likelihood, missing censoring
+Assume we have $N$ observations of $(\tilde{T},\tilde{D}, X)$. Using that the survival function is a product of the individual cause-specific survival functions, $S(t_i|x_i) = \prod S_j(t_i|x_i)$, we can write the likelihood as
+#+begin_export latex
+\begin{align*}
+L = \prod_{j = 1}^2\prod_{i = 1}^N\lambda_{j}(t_i|x_i)^{d_{ij}}\exp(-\Lambda_j(t_i|x_i)),
+\end{align*}
+#+end_export
+where $d_{ij} = 1\{\tilde{D}_i = j\}$. \pause This means that the likelihood function is a product of 2 likelihoods, one for each cause. We can then maximize each cause-specific likelihood function seperately by choosing some parametric form for the baseline hazards.
+
+
+*** Brier score estimation
+# Delete some text
+# The Cox-exponential is...
+The model I will be focusing on is the Cox-exponential model. This model assumes that the baseline hazard is constant, meaning that
+#+begin_export latex
+\begin{align*}
+\Lambda_{0j}(\tau) = \int_0^{\tau} \lambda_{0j}(s)ds = \tau\lambda_{0j},
+\end{align*}
+#+end_export
+as $\lambda_{0j}$ is now a constant. \pause
+# Talk about the idea being that we don't need some complex shape over time for the baseline hazard, as we only care about being accurate at one timepoint.
+
+I will then estimate the parameters by minimizing the Brier-score for some fixed timepoint $\tau$, i.e.
+# move this to a previous slide and point out that F could be any model
+#+begin_export latex
+\begin{align*}
+BSE = &\argmin_{\boldsymbol{\beta}\in\mathbb{R}^{3\times p},\boldsymbol{\lambda_0}\in\mathbb{R}^{+3}}\sum_{j = 0}^2\frac{1}{N}\sum_{i = 1}^N(F_j(\tau|x_i,\boldsymbol{\beta},\boldsymbol{\lambda_0})-o_i(\tau,j))^2,
+\end{align*}
+#+end_export
+where $o_i(\tau,j) = 1(\tilde{D}_i= j,\tilde{T}_i\leq \tau)$. Note that we also estimate the censoring state [cite:@joint]. \pause
+# Talk about why minimizing the Brier-score makes sense as that is the typical quantity we want to minimize in prediction, as it measures both calibration and discrimination
+
+Assuming constant baseline hazards for all causes and letting $A_i = \sum_{k = 0}^2 \exp(\boldsymbol{\beta}_kx_i)\lambda_{0k}$, we can write the BSE as
+#+begin_export latex
+\begin{align*}
+BSE = \argmin_{\boldsymbol{\beta}\in\mathbb{R}^{3\times p},\boldsymbol{\lambda_0}\in\mathbb{R}^{+3}}\sum_{j = 0}^2\sum_{i = 1}^N \left(\exp(\boldsymbol{\beta}_jx_i)\lambda_{0j}\frac{1-\exp\left[-\tau A_i\right]}{A_i}-o_i(\tau,j)\right)^2
+\end{align*}
+#+end_export
+
+
+
+
+*** Artificial censoring
+# describe what artificial censoring is
+
+Asume we will artificial censor at $t = 5$. This means our new observed time will now be $\tilde{T}_{\text{trunc}} = \min(\tilde{T},5) = \min(T,C,5)$ and the new observed event $\tilde{D}_{\text{trunc}} = 1\{T\leq 5\}\tilde{D} =  1\{T\leq C \wedge T\leq 5\}D$. Doing artificial censoring means we truncate all times at a specific timepoint, and practically means that estimations methods such as the partial likelihood and maximum likelihood can't learn from data after that timepoint. The Brier-score estimation is unaffected by artificial censoring, as it only learns from data before timepoint $\tau$.
+
+*** Artificial censoring example plot using non-proportional hazards data
+
+
+
+
+*** Practical examples
+Using DP-Next data estimate for specific covariate values and fit models both with and without artificial censoring
+
+
+*** Discussion
+The BSE is not convex so it needs good initial guess to perform well.
+\vfill
+
+

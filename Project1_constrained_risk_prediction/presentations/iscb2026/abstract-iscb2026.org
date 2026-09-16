@@ -1,0 +1,16 @@
+Title: A loss-based framework for coherent prediction of competing risks at prespecified time horizons
+
+Keywords: Competing risks, Individualized risk prediction, Loss-based
+          estimation, Constrained optimization, Survival analysis, Machine learning
+
+** Introduction
+Accurate prediction of disease risk in the presence of competing risks remains a central challenge in clinical epidemiology. We target individualized predictions of the 5-year risk of type 2 diabetes (T2D) and simultaneously the 5-year risk of the competing risk of death. Common estimation methods, such as Fine-Gray regression and cause-specific Cox regression, target only one cause at a time and are not optimized for a given prediction time horizon.
+
+** Methods
+We develop a loss-based estimation framework for the simultaneous prediction of multiple competing risks at a prespecified time horizon. Our approach provides a way to estimate a broad class of existing regression models for competing risks such that the resulting models are optimized for individualized risk prediction. Crucially, the framework enables seamless integration of flexible learner libraries and enables structural constraints during estimation. These may include coherence constraints that guarantee that the predicted risks respect the parameter space and domain-informed shape constraints (e.g., monotonicity in age). Estimation is achieved via constrained optimization of a differentiable loss function, such as the Brier score.
+
+** Results
+We evaluate the proposed method in a large Danish registry-based cohort, where it provides individualized 5-year risk predictions for T2D and death without T2D. These predictions may be used for population-level monitoring of type 2 diabetes in Denmark, or to support clinical decision-making, for example in risk stratification of patients. The method demonstrates accurate and well-calibrated estimates of the cause-specific risks.
+
+** Discussion
+This work introduces a flexible and unified framework for individualized prediction of cause-specific risks at a fixed time horizon. By directly optimizing a loss function at the target time point and enforcing structural constraints, the method yields coherent and clinically interpretable risk estimates. A central strength of the framework is its ability to incorporate flexible learner libraries, allowing it to bridge classical survival models with modern machine learning approaches. At the same time, the inclusion of domain-informed constraints ensures that increased flexibility does not compromise the validity or interpretability of the predictions. Ongoing work explores integration with advanced learners, including boosting and deep neural networks, to further enhance performance.

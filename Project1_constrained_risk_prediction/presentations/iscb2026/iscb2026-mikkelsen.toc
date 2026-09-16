@@ -1,0 +1,4 @@
+\beamer@sectionintoc {1}{A five-year prediction problem}{2}{0}{1}
+\beamer@sectionintoc {2}{From framework to learner}{6}{0}{2}
+\beamer@sectionintoc {3}{The role of follow-up after five years}{12}{0}{3}
+\beamer@sectionintoc {4}{Application and take-home message}{15}{0}{4}

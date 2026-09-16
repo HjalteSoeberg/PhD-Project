@@ -1,0 +1,183 @@
+% Created 2026-09-08 Tue 08:27
+% Intended LaTeX compiler: pdflatex
+\documentclass{beamer}\usepackage{listings}
+\usepackage{color}
+\usepackage{amsmath}
+\usepackage{array}
+\usepackage[T1]{fontenc}
+\usepackage{natbib}
+\lstset{
+keywordstyle=\color{blue},
+commentstyle=\color{red},stringstyle=\color[rgb]{0,.5,0},
+basicstyle=\ttfamily\small,
+columns=fullflexible,
+breaklines=true,
+breakatwhitespace=false,
+numbers=left,
+numberstyle=\ttfamily\tiny\color{gray},
+stepnumber=1,
+numbersep=10pt,
+backgroundcolor=\color{white},
+tabsize=4,
+literate={~}{$\sim$}{1}{ø}{{\o}}1{æ}{{\ae}}1{å}{{\aa}}1{Ø}{{\OE}}1{Æ}{{\AE}}1{Å}{{\AA}}1,keepspaces=true,
+showspaces=false,
+showstringspaces=false,
+xleftmargin=.23in,
+frame=single,
+basewidth={0.5em,0.4em},
+}
+\institute{}
+\subtitle{}
+\RequirePackage[absolute, overlay]{textpos}
+\setbeamertemplate{footline}[frame number]
+\setbeamertemplate{navigation symbols}{}
+\RequirePackage{fancyvrb}
+\RequirePackage{array}
+\RequirePackage{multirow}
+\RequirePackage{tcolorbox}
+\definecolor{mygray}{rgb}{.95, 0.95, 0.95}
+\newcommand{\mybox}[1]{\vspace{.5em}\begin{tcolorbox}[boxrule=0pt,colback=mygray] #1 \end{tcolorbox}}
+\newcommand{\sfootnote}[1]{\renewcommand{\thefootnote}{\fnsymbol{footnote}}\footnote{#1}\setcounter{footnote}{0}\renewcommand{\thefootnote}{\arabic{foot note}}}
+\usepackage{alphalph}
+\alphalph{\value{footnote}}
+\setbeamertemplate{itemize item}{\textbullet}
+\setbeamertemplate{itemize subitem}{-}
+\setbeamertemplate{itemize subsubitem}{}
+\setbeamertemplate{enumerate item}{\insertenumlabel.}
+\setbeamertemplate{enumerate subitem}{\insertenumlabel.\insertsubenumlabel}
+\setbeamertemplate{enumerate subsubitem}{\insertenumlabel.\insertsubenumlabel.\insertsubsubenumlabel}
+\setbeamertemplate{enumerate mini template}{\insertenumlabel}
+\makeatletter\def\blfootnote{\xdef\@thefnmark{}\@footnotetext}\makeatother
+\newcommand{\E}{\ensuremath{\mathrm{E}}}
+\renewcommand{\P}{\ensuremath{\mathrm{P}}}
+\renewcommand{\d}{\ensuremath{\mathrm{d}}}
+\setbeamertemplate{caption}{\raggedright\insertcaption\par}
+\usepackage{amsmath}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argmax}{arg\,max}
+
+\renewcommand*\familydefault{\sfdefault}
+\itemsep2pt
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{capt-of}
+\usepackage{hyperref}
+\usetheme{default}
+\author{Hjalte Søberg Mikkelsen}
+\date{}
+\title{}
+\begin{document}
+
+\section{Introduction}
+\label{sec:orga5f6a42}
+\begin{frame}[label={sec:org581a002}]{Introduction}
+My PhD project is part of a larger project called DP-Next. DP-Next is a project aimed at developing a sustainably effective strategy for prevention of Type 2 Diabetes in Denmark, Greenland and the Faroe Islands.
+\vfill
+My goal is to develope a risk prediction model that can predict the 5 year risk of getting diagnosed with type 2 diabetes and the 5 year risk of death, only using registry data. This model is to be used to select people that will be included in the devolopement of the prevention strategy. 
+\end{frame}
+
+
+\begin{frame}[label={sec:orgeed6438}]{Motivation/Setting}
+When you estimate the cause specific risks at time \(\tau\) using semi-parametric Cox regression for the cause specific hazards, the sum of all cause specific risks can be more than 1 for certain covariate values.
+\vfill
+We need to export the prediction model developed in protected environments, such that we can give it to the public.
+\vfill
+
+It is unclear when to artifical censor subjects at the prediction time horizon.
+\end{frame}
+
+\begin{frame}[label={sec:org89b2e31}]{Setting: competing risks}
+Assume we are in a competing risks scenario and want to predict the risk of getting diagnosed with T2D and the risk of dying, at some fixed timepoint \(\tau\). Denote:
+\vfill
+\begin{itemize}
+\item \(T\) as the time between time0 and the date of an event
+\item \(D\in\{1,2\}\) as the cause of the event
+\item \(X = (X^1,...,X^p)\) as a p-dimensional vector of baseline covariates, which can both be numeric or categorical.
+\end{itemize}
+\vfill
+Additionally we assume that the event time \(T\) is right censored at the random time \(C\), where \(P(C>\tau\vert X)>0\) almost surely. Denote \(\tilde{T} = \min(T,C)\) and \(\tilde{D} = \Delta D\) as the observed time and event, where \(\Delta = 1\{T\leq C\}\).
+\end{frame}
+
+\begin{frame}[label={sec:orgbfbee36}]{Setting: Proportional hazards model}
+Let \(\beta\) be a p-dimensional parameter vector and \(x\) be some observed value of \(X\). We are interrested in the cumulative incidence function for both causes, which for cause \(j\) is \(F_j(t|x) = P(T\leq t, D = j|x)\), and can be written as
+\begin{align*}
+F_j(t|x) = \int_0^t S(s-|x)d\Lambda_j(s|x),
+\end{align*}
+where \(S\) is the survival function
+\begin{align*}
+S(t|x) = \exp\left(-\sum_{i = 1}^2 \Lambda_i(s|x)\right),
+\end{align*}
+and \(\Lambda_j\) is the cumulative hazard
+\begin{align*}
+\Lambda_j(t|x) = \exp(x\beta_j)\Lambda_{0j}(t).
+\end{align*}
+\(\Lambda_{0j}\) is the baseline cumulative hazard for cause j, which is defined as \(\Lambda_{0j}(t) = \int_0^t \lambda_{0j}(s)ds\), where \(\lambda_{0j}\) is the baseline hazard
+\end{frame}
+
+\begin{frame}[label={sec:org9f663b4}]{Proportional hazards model estimation}
+The typical ways of etimating these kinds of models is to either use partial likelihood, where we assume the baseline hazard is non-parametric, or maximum likelihood, where we need to choose some parametric form for the baseline hazard functions. \pause
+\vfill
+In this project I will choose a parametric form for the baseline hazards, but I will minimize the Brier-score at a fixed timepoint instead of maximizing the likelihood.\pause
+\vfill
+I will throughout the presentation assume that \(C\) and \(T\) are conditionally independent given \(X\).
+\end{frame}
+
+\begin{frame}[label={sec:orgfc1ea4b}]{Maximum likelihood}
+Assume we have \(N\) observations of \((\tilde{T},\tilde{D}, X)\). Using that the survival function is a product of the individual cause-specific survival functions, \(S(t_i|x_i) = \prod S_j(t_i|x_i)\), we can write the likelihood as
+\begin{align*}
+L = \prod_{j = 1}^2\prod_{i = 1}^N\lambda_{j}(t_i|x_i)^{d_{ij}}\exp(-\Lambda_j(t_i|x_i)),
+\end{align*}
+where \(d_{ij} = 1\{\tilde{D}_i = j\}\). \pause This means that the likelihood function is a product of 2 likelihoods, one for each cause. We can then maximize each cause-specific likelihood function seperately by choosing some parametric form for the baseline hazards.
+\end{frame}
+
+
+\begin{frame}[label={sec:orgb978128}]{Brier score estimation}
+The model I will be focusing on is the Cox-exponential model. This model assumes that the baseline hazard is constant, meaning that
+\begin{align*}
+\Lambda_{0j}(\tau) = \int_0^{\tau} \lambda_{0j}(s)ds = \tau\lambda_{0j},
+\end{align*}
+as \(\lambda_{0j}\) is now a constant. \pause
+
+I will then estimate the parameters by minimizing the Brier-score for some fixed timepoint \(\tau\), i.e.
+
+\begin{align*}
+BSE = &\argmin_{\boldsymbol{\beta}\in\mathbb{R}^{3\times p},\boldsymbol{\lambda_0}\in\mathbb{R}^{+3}}\sum_{j = 0}^2\frac{1}{N}\sum_{i = 1}^N(F_j(\tau|x_i,\boldsymbol{\beta},\boldsymbol{\lambda_0})-o_i(\tau,j))^2,
+\end{align*}
+where \(o_i(\tau,j) = 1(\tilde{D}_i= j,\tilde{T}_i\leq \tau)\). Note that we also estimate the censoring state (Munch and Gerds, 2024). \pause
+
+Assuming constant baseline hazards for all causes and letting \(A_i = \sum_{k = 0}^2 \exp(\boldsymbol{\beta}_kx_i)\lambda_{0k}\), we can write the BSE as
+\begin{align*}
+BSE = \argmin_{\boldsymbol{\beta}\in\mathbb{R}^{3\times p},\boldsymbol{\lambda_0}\in\mathbb{R}^{+3}}\sum_{j = 0}^2\sum_{i = 1}^N \left(\exp(\boldsymbol{\beta}_jx_i)\lambda_{0j}\frac{1-\exp\left[-\tau A_i\right]}{A_i}-o_i(\tau,j)\right)^2
+\end{align*}
+\end{frame}
+
+
+
+
+\begin{frame}[label={sec:org4cf67c7}]{Artificial censoring}
+Asume we will artificial censor at \(t = 5\). This means our new observed time will now be \(\tilde{T}_{\text{trunc}} = \min(\tilde{T},5) = \min(T,C,5)\) and the new observed event \(\tilde{D}_{\text{trunc}} = 1\{T\leq 5\}\tilde{D} =  1\{T\leq C \wedge T\leq 5\}D\). Doing artificial censoring means we truncate all times at a specific timepoint, and practically means that estimations methods such as the partial likelihood and maximum likelihood can't learn from data after that timepoint. The Brier-score estimation is unaffected by artificial censoring, as it only learns from data before timepoint \(\tau\).
+\end{frame}
+
+\begin{frame}[label={sec:org75a1911}]{Artificial censoring example plot using non-proportional hazards data}
+\end{frame}
+
+
+
+
+\begin{frame}[label={sec:orgfe5f16e}]{Practical examples}
+Using DP-Next data estimate for specific covariate values and fit models both with and without artificial censoring
+\end{frame}
+
+
+\begin{frame}[label={sec:org1273f6c}]{Discussion}
+The BSE is not convex so it needs good initial guess to perform well.
+\vfill
+\end{frame}
+\end{document}
