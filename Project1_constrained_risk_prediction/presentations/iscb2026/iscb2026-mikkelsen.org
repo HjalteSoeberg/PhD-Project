@@ -69,17 +69,24 @@ We need to export the prediction model developed in protected environments, such
 # change when 
 It is unclear when to artifical censor subjects at the prediction time horizon.
 
+*** Setting: competing risks
+Assume we are in a competing risks scenario and want to predict the risk of getting diagnosed with T2D and the risk of dying, at some fixed timepoint $\tau$. Denote:
+\vfill
+- $T$ as the time between time0 and the date of an event
+- $D\in\{1,2\}$ as the cause of the event
+- $X = (X^1,...,X^p)$ as a p-dimensional vector of baseline covariates, which can both be numeric or categorical.
+\vfill
+Additionally we assume that the event time $T$ is right censored at the random time $C$, where $P(C>\tau\vert X)>0$ almost surely. Denote $\tilde{T} = \min(T,C)$ and $\tilde{D} = \Delta D$ as the observed time and event, where $\Delta = 1\{T\leq C\}$.
+
 
 *** The idea: fit both risks to the prediction horizon
-# change Y to T and introduce T_death
-Let $Y_i(t)$ be a competing risks process with states: event-free ($j=0$), diabetes ($j=1$), or death without diabetes ($j=2$).
-
+Let $\tilde{F}_j(t|x) = P(\tilde{T}\leq t, \tilde{D} = j|x)$ and $o_{ij}(\tau) = 1(\tilde{D}_i= j,\tilde{T}_i\leq \tau)$
 #+begin_export latex
 \begin{block}{Brier-score loss function}
 \[
 BSE=
-\frac{1}{N}\sum_{i=1}^{N}w_i(\tau)\sum_{j=1}^{2}
-\{F_j(\tau\mid X_i)-1\{Y_i(\tau) = j\}\}^{2}.
+\frac{1}{N}\sum_{i=1}^{N}\sum_{j=0}^{2}
+\{\tilde{F}_j(\tau\mid X_i)-o_{ij}(\tau)\}^{2}.
 \]
 \end{block}
 #+end_export
@@ -88,7 +95,7 @@ BSE=
 - One loss estimates the two cause-specific models *simultaneously*.
 # - $\Theta$ encodes coherence: $F_j\geq0$ and $F_0+F_1+F_2=1$.
 
-Here $w_i(\tau)$ accounts for right censoring (without censoring, $w_i=1$).
+Here the sum starts at $j = 0$ which is a method for handling right censoring \cite{munch}.
 
 *** COMMENT Which death risk are we communicating?
 
@@ -160,30 +167,36 @@ where $d_{ij} = 1\{\tilde{D}_i = j\}$. \pause This means that the likelihood fun
 
 *** The Cox-exponential model
 
-For causes $j\in\{1,2\}$, assume constant baseline hazards:
+For causes $j\in\{0,1,2\}$, assume constant baseline hazards:
 \[
 \lambda_j(t\mid x)=\lambda_{0j}\exp(x^\top\beta_j),\qquad \lambda_{0j}>0.
 \]
-Let $A(x)=\sum_{j=1}^{2}\lambda_{0j}\exp(x^\top\beta_j)$. Then
+Let $\tilde{A}(x)=\sum_{j=0}^{2}\lambda_{0j}\exp(x^\top\beta_j)$. Then
 \[
-F_j(\tau\mid x)=\frac{\lambda_{0j}\exp(x^\top\beta_j)}{A(x)}
-\{1-\exp[-\tau A(x)]\}.
+\tilde{F}_j(\tau\mid x)=\frac{\lambda_{0j}\exp(x^\top\beta_j)}{\tilde{A}(x)}
+\{1-\exp[-\tau \tilde{A}(x)]\}.
 \]
 
-Both parameter sets $(\beta_1,\lambda_{01})$ and $(\beta_2,\lambda_{02})$ are
-estimated simultaniously by minimizing the Brier score loss. The construction guarantees
-$F_1(\tau\mid x)+F_2(\tau\mid x)\leq1$ for every $x$.
+All parameter sets $(\beta_0,\lambda_{00})$, $(\beta_1,\lambda_{01})$ and $(\beta_2,\lambda_{02})$ are
+estimated simultaniously by minimizing the Brier score loss.
 
 *** Brier score estimation
 Assuming Cox-proportional hazards model and constant baseline hazards for all causes, our estimator becomes:
 
 #+begin_export latex
 \begin{align*}
-\hat{\theta}_{BSE}=&\arg\min_{\theta}\frac{1}{N}\sum_{i=1}^{N}w_i(\tau)\sum_{j=1}^{2}\\
-&\{\frac{\lambda_{0j}\exp(x_i^\top\beta_j)}{A(x_i)}\{1-\exp[-\tau A(x_i)]\}-1\{Y_i(\tau) = j\}\}^{2}.
+\hat{\theta}_{BSE}=&\arg\min_{\theta}\frac{1}{N}\sum_{i=1}^{N}\sum_{j=0}^{2}\\
+&\{\frac{\lambda_{0j}\exp(x_i^\top\beta_j)}{\tilde{A}(x_i)}\{1-\exp[-\tau \tilde{A}(x_i)]\}-o_{ij}(\tau)\}^{2}.
 \end{align*}
 #+end_export
-
+\pause \vfill
+Cause specific risk prediction can then be obtained by substituting into $F_j(\tau|x) = P(T\leq \tau, D = j|x)$. Let $\hat{A}(x)=\sum_{j=1}^{2}\hat{\lambda}_{0j}\exp(x^\top\hat{\beta}_j)$
+#+begin_export latex
+\begin{align*}
+F_j(\tau|x) = \frac{\hat{\lambda}_{0j}\exp(x^\top\hat{\beta}_j)}{\hat{A}(x)}
+\{1-\exp[-\tau \hat{A}(x)]\}, \text{ for }j\in\{1,2\}
+\end{align*}
+#+end_export
 
 *** Why estimate like this?
 
