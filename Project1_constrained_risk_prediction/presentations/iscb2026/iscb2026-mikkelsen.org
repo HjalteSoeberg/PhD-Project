@@ -247,7 +247,17 @@ periods and can learn the wrong effect for the five-year target.
 *** Simulation study
 #+ATTR_LATEX: :width 1\textwidth
 #+RESULTS:
+[[file:sim_study_t4.pdf]]
+
+*** Simulation study
+#+ATTR_LATEX: :width 1\textwidth
+#+RESULTS:
 [[file:sim_study_t6.pdf]]
+
+*** Simulation study
+#+ATTR_LATEX: :width 1\textwidth
+#+RESULTS:
+[[file:sim_study_t13.pdf]]
 
 
 *** COMMENT The Cox-exponential Brier-score estimator changes the question
