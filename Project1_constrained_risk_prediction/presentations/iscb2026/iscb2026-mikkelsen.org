@@ -167,7 +167,7 @@ where $d_{ij} = 1\{\tilde{D}_i = j\}$. \pause This means that the likelihood fun
 
 *** The Cox-exponential model
 
-For causes $j\in\{0,1,2\}$, assume constant baseline hazards:
+For causes $j\in\{0,1,2\}$, assume Cox proportional hazards with constant baseline hazards:
 \[
 \lambda_j(t\mid x)=\lambda_{0j}\exp(x^\top\beta_j),\qquad \lambda_{0j}>0.
 \]
@@ -190,7 +190,7 @@ Assuming Cox-proportional hazards model and constant baseline hazards for all ca
 \end{align*}
 #+end_export
 \pause \vfill
-Cause specific risk prediction can then be obtained by substituting into $F_j(\tau|x) = P(T\leq \tau, D = j|x)$. Let $\hat{A}(x)=\sum_{j=1}^{2}\hat{\lambda}_{0j}\exp(x^\top\hat{\beta}_j)$
+Cause specific risk predictions can then be obtained by substituting into $F_j(\tau|x) = P(T\leq \tau, D = j|x)$. Let $\hat{A}(x)=\sum_{j=1}^{2}\hat{\lambda}_{0j}\exp(x^\top\hat{\beta}_j)$,
 #+begin_export latex
 \begin{align*}
 F_j(\tau|x) = \frac{\hat{\lambda}_{0j}\exp(x^\top\hat{\beta}_j)}{\hat{A}(x)}
