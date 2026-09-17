@@ -1,4 +1,4 @@
-% Created 2026-09-17 Thu 08:53
+% Created 2026-09-17 Thu 09:02
 % Intended LaTeX compiler: pdflatex
 \documentclass{beamer}\usepackage{listings}
 \usepackage{color}
@@ -76,9 +76,9 @@ basewidth={0.5em,0.4em},
 \maketitle
 
 \section{A five-year prediction problem}
-\label{sec:org0653e5f}
+\label{sec:org707f556}
 
-\begin{frame}[label={sec:orgbcecce4},fragile]{Competing risks risk prediction}
+\begin{frame}[label={sec:org58ead91},fragile]{Competing risks risk prediction}
 \begin{align*}
 F_1(5\mid x)&=P(\text{type 2 diabetes by 5 years}\mid x),\\
 F_2(5\mid x)&=P(\text{death without diabetes by 5 years}\mid x).
@@ -89,7 +89,7 @@ F_2(5\mid x)&=P(\text{death without diabetes by 5 years}\mid x).
 \end{center}
 \end{frame}
 
-\begin{frame}[label={sec:orgd233698}]{Motivation}
+\begin{frame}[label={sec:orge61dbb4}]{Motivation}
 When you estimate the cause specific risks at time \(\tau\) using semi-parametric Cox regression for the cause specific hazards, the sum of all cause specific risks can be more than 1 for certain covariate values.
 \vfill
 We need to export the prediction model developed in protected environments, such that we can give it to the public.
@@ -98,7 +98,7 @@ We need to export the prediction model developed in protected environments, such
 It is unclear when to artifical censor subjects at the prediction time horizon.
 \end{frame}
 
-\begin{frame}[label={sec:org059c551}]{Setting: competing risks}
+\begin{frame}[label={sec:org5a2eb6c}]{Setting: competing risks}
 Assume we are in a competing risks scenario and want to predict the risk of getting diagnosed with T2D and the risk of dying, at some fixed timepoint \(\tau\). Denote:
 \vfill
 \begin{itemize}
@@ -107,17 +107,17 @@ Assume we are in a competing risks scenario and want to predict the risk of gett
 \item \(X = (X^1,...,X^p)\) as a p-dimensional vector of baseline covariates, which can both be numeric or categorical.
 \end{itemize}
 \vfill
-Additionally we assume that the event time \(T\) is right censored at the random time \(C\), where \(P(C>\tau\vert X)>0\) almost surely. Denote \(\tilde{T} = \min(T,C)\) and \(\tilde{D} = \Delta D\) as the observed time and event, where \(\Delta = 1\{T\leq C\}\).
+Additionally we assume that the event time \(T\) is right censored at the random time \(C\), where \(P(C>\tau\vert X)>0\) almost surely. Denote \(\widetilde{T} = \min(T,C)\) and \(\widetilde{D} = \Delta D\) as the observed time and event, where \(\Delta = 1\{T\leq C\}\).
 \end{frame}
 
 
-\begin{frame}[label={sec:org6670b7d}]{The idea: fit both risks to the prediction horizon}
-Let \(\tilde{F}_j(t|x) = P(\tilde{T}\leq t, \tilde{D} = j|x)\) and \(o_{ij}(\tau) = 1(\tilde{D}_i= j,\tilde{T}_i\leq \tau)\)
+\begin{frame}[label={sec:org7dc4feb}]{The idea: fit both risks to the prediction horizon}
+Let \(\widetilde{F}_j(t|x) = P(\widetilde{T}\leq t, \widetilde{D} = j|x)\) and \(o_{ij}(\tau) = 1(\widetilde{D}_i= j,\widetilde{T}_i\leq \tau)\)
 \begin{block}{Brier-score loss function}
 \[
 BSE=
 \frac{1}{N}\sum_{i=1}^{N}\sum_{j=0}^{2}
-\{\tilde{F}_j(\tau\mid X_i)-o_{ij}(\tau)\}^{2}.
+\{\widetilde{F}_j(\tau\mid X_i)-o_{ij}(\tau)\}^{2}.
 \]
 \end{block}
 \pause
@@ -130,9 +130,9 @@ Here the sum starts at \(j = 0\) which is a method for handling right censoring 
 \end{frame}
 
 \section{From framework to learner}
-\label{sec:org5bbedfa}
+\label{sec:org3392ce0}
 
-\begin{frame}[label={sec:orgc4f3ea5}]{Focus of this talk: a single model, not prediction strategy}
+\begin{frame}[label={sec:org4899b41}]{Focus of this talk: a single model, not prediction strategy}
 \begin{center}
 Learner library $\longrightarrow$ K-fold cross-validation
 $\longrightarrow$ Super Learner ensemble $\longrightarrow$ external validation
@@ -151,27 +151,27 @@ the entire prediction strategy.
 
 
 
-\begin{frame}[label={sec:org0a5a545}]{The Cox-exponential model}
+\begin{frame}[label={sec:org3265319}]{The Cox-exponential model}
 For causes \(j\in\{0,1,2\}\), assume Cox proportional hazards with constant baseline hazards:
 \[
 \lambda_j(t\mid x)=\lambda_{0j}\exp(x^\top\beta_j),\qquad \lambda_{0j}>0.
 \]
-Let \(\tilde{A}(x)=\sum_{j=0}^{2}\lambda_{0j}\exp(x^\top\beta_j)\). Then
+Let \(\widetilde{A}(x)=\sum_{j=0}^{2}\lambda_{0j}\exp(x^\top\beta_j)\). Then
 \[
-\tilde{F}_j(\tau\mid x)=\frac{\lambda_{0j}\exp(x^\top\beta_j)}{\tilde{A}(x)}
-\{1-\exp[-\tau \tilde{A}(x)]\}.
+\widetilde{F}_j(\tau\mid x)=\frac{\lambda_{0j}\exp(x^\top\beta_j)}{\widetilde{A}(x)}
+\{1-\exp[-\tau \widetilde{A}(x)]\}.
 \]
 
 All parameter sets \((\beta_0,\lambda_{00})\), \((\beta_1,\lambda_{01})\) and \((\beta_2,\lambda_{02})\) are
 estimated simultaniously by minimizing the Brier score loss.
 \end{frame}
 
-\begin{frame}[label={sec:orgcd08149}]{Brier score estimation}
+\begin{frame}[label={sec:org6ef71ff}]{Brier score estimation}
 Assuming Cox-proportional hazards model and constant baseline hazards for all causes, our estimator becomes:
 
 \begin{align*}
 \hat{\theta}_{BSE}=&\arg\min_{\theta}\frac{1}{N}\sum_{i=1}^{N}\sum_{j=0}^{2}\\
-&\{\frac{\lambda_{0j}\exp(x_i^\top\beta_j)}{\tilde{A}(x_i)}\{1-\exp[-\tau \tilde{A}(x_i)]\}-o_{ij}(\tau)\}^{2}.
+&\{\frac{\lambda_{0j}\exp(x_i^\top\beta_j)}{\widetilde{A}(x_i)}\{1-\exp[-\tau \widetilde{A}(x_i)]\}-o_{ij}(\tau)\}^{2}.
 \end{align*}
 \pause \vfill
 Cause specific risk predictions can then be obtained by substituting into \(F_j(\tau|x) = P(T\leq \tau, D = j|x)\). Let \(\hat{A}(x)=\sum_{j=1}^{2}\hat{\lambda}_{0j}\exp(x^\top\hat{\beta}_j)\),
@@ -181,7 +181,7 @@ F_j(\tau|x) = \frac{\hat{\lambda}_{0j}\exp(x^\top\hat{\beta}_j)}{\hat{A}(x)}
 \end{align*}
 \end{frame}
 
-\begin{frame}[label={sec:org06ee9c7}]{Why estimate like this?}
+\begin{frame}[label={sec:org45f082e}]{Why estimate like this?}
 Estimating both cause-specific hazards this way:
 \begin{itemize}
 \item targets calibration and discrimination directly at the prediction horizon;
@@ -196,9 +196,9 @@ Choosing a simple parametric model makes sense as we only fit the model for one 
 
 
 \section{The role of follow-up after five years}
-\label{sec:org4e3ce4d}
+\label{sec:orgba1cd62}
 
-\begin{frame}[label={sec:org5233500}]{Artificial censoring at the prediction horizon}
+\begin{frame}[label={sec:org99cb34c}]{Artificial censoring at the prediction horizon}
 Artificial censoring replaces the observed follow-up by
 \[
 \widetilde T_i^{(5)}=\min(\widetilde T_i,5),\qquad
@@ -223,25 +223,25 @@ periods and can learn the wrong effect for the five-year target.
 \end{frame}
 
 
-\begin{frame}[label={sec:org6553f20}]{Non-proportional hazards data}
+\begin{frame}[label={sec:org8ae3ddf}]{Non-proportional hazards data}
 \begin{center}
 \includegraphics[width=1\textwidth]{non_prop_hazard_plot.pdf}
 \end{center}
 \end{frame}
 
-\begin{frame}[label={sec:org8f059ab}]{Simulation study}
+\begin{frame}[label={sec:orgd08f76c}]{Simulation study}
 \begin{center}
 \includegraphics[width=1\textwidth]{sim_study_t4.pdf}
 \end{center}
 \end{frame}
 
-\begin{frame}[label={sec:org52c9cae}]{Simulation study}
+\begin{frame}[label={sec:org4a1e90a}]{Simulation study}
 \begin{center}
 \includegraphics[width=1\textwidth]{sim_study_t6.pdf}
 \end{center}
 \end{frame}
 
-\begin{frame}[label={sec:org0720c80}]{Simulation study}
+\begin{frame}[label={sec:org91b93d4}]{Simulation study}
 \begin{center}
 \includegraphics[width=1\textwidth]{sim_study_t13.pdf}
 \end{center}
@@ -249,9 +249,9 @@ periods and can learn the wrong effect for the five-year target.
 
 
 \section{Application and take-home message}
-\label{sec:org9b357fa}
+\label{sec:orgbaea29d}
 
-\begin{frame}[label={sec:org186af06}]{Discussion}
+\begin{frame}[label={sec:orge6bc0a4}]{Discussion}
 \begin{itemize}
 \item The optimization is non-convex; initialization and repeated starts matter;\pause
 \item How to handle censoring; Use IPCW or fit a model for the censoring state?\pause
