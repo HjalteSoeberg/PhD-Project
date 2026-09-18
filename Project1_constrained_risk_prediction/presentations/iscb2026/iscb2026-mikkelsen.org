@@ -1,4 +1,4 @@
-#+TITLE: A loss-based framework for coherent prediction of competing risks
+#+TITLE: A loss-based framework for coherent prediction of competing risks at prespecified time horizons
 #+SUBTITLE: 
 #+AUTHOR: Hjalte Søberg Mikkelsen
 #+INSTITUTE:
@@ -8,17 +8,17 @@
 #+SETUPFILE: ~/emacs-genome/snps/org-templates/setup-beamer.org
 #+PROPERTY: header-args:R :session none :exports results :results graphics file
 
-* A five-year prediction problem
+* A six-year prediction problem
 
-*** Competing risks risk prediction
+*** Predicting the absolute 6-year risk of diabetes in presence of the competing risk of death
 :PROPERTIES:
 :BEAMER_OPT: fragile
 :END:
 
 # For each person, we want to predict at time 0:
 \begin{align*}
-F_1(5\mid x)&=P(\text{type 2 diabetes by 5 years}\mid x),\\
-F_2(5\mid x)&=P(\text{death without diabetes by 5 years}\mid x).
+F_1(6\mid x)&=P(\text{diabetes by 6 years}\mid x),\\
+F_2(6\mid x)&=P(\text{death without diabetes by 6 years}\mid x).
 \end{align*}
 
 #+begin_src R :file risk-plane.pdf :width 6.5 :height 5.6
@@ -33,7 +33,7 @@ p <- ggplot(pred, aes(death_without_diabetes, diabetes, colour = person)) +
     data = data.frame(x = c(0, 1, 0), y = c(0, 0, 1)),aes(x, y),inherit.aes = FALSE,fill = "grey97",colour = "grey55",linewidth = 0.7
   ) +
   annotate(
-    "text",x = 0.30,y = 0.80,label = expression(F[1](5)+F[2](5) <= 1),
+    "text",x = 0.30,y = 0.80,label = expression(F[1](6)+F[2](6) <= 1),
     colour = "grey35",
     size = 4.2
   ) +
@@ -42,10 +42,10 @@ p <- ggplot(pred, aes(death_without_diabetes, diabetes, colour = person)) +
     aes(label = person),hjust = -0.12,vjust = -0.6,show.legend = FALSE,size = 3.8
   ) +
   scale_x_continuous(
-    "5-year risk of death without diabetes",limits = c(0, 1),breaks = seq(0, 1, 0.2),labels = scales::percent
+    "6-year risk of death without diabetes",limits = c(0, 1),breaks = seq(0, 1, 0.2),labels = scales::percent
   ) +
   scale_y_continuous(
-    "5-year risk of type 2 diabetes",limits = c(0, 1),breaks = seq(0, 1, 0.2),labels = scales::percent
+    "6-year risk of diabetes",limits = c(0, 1),breaks = seq(0, 1, 0.2),labels = scales::percent
   ) +
   coord_equal(expand = FALSE) +
   scale_colour_brewer(palette = "Dark2", guide = "none") +
@@ -60,8 +60,27 @@ ggsave(
 #+RESULTS:
 [[file:risk-plane.pdf]]
 
-*** Motivation
-# define time0
+*** Prediction modeling strategy
+# This doesnt make sense, as we then include models that can't be transfered from protected envioroments
+#+begin_export latex
+\begin{center}
+Learner library $\longrightarrow$ K-fold cross-validation
+$\longrightarrow$ Super learner ensemble $\longrightarrow$ External validation
+\end{center}
+#+end_export
+Candidate learners include cause-specific Cox models, IPCW binomial
+regression and machine learning methods suitably adapted for competing risk outcomes.
+
+\pause
+\vfill
+# Ryk til top
+**** Focus of this talk
+- Parametric Cox regression models for both causes estimated coherently by minimizing the prediction time horizon-specific Brier-score. A learner that ensures \(F_1(6|x)+F_2(6|x)\le 1\).
+- If and when to artifically censor subjects at the prediction time horizon.
+
+*** COMMENT Motivation
+# define time 0
+ that learns both cause-specific risks jointly.
 When you estimate the cause specific risks at time $\tau$ using semi-parametric Cox regression for the cause specific hazards, the sum of all cause specific risks can be more than 1 for certain covariate values.
 \vfill
 We need to export the prediction model developed in protected environments, such that we can give it to the public.
@@ -69,33 +88,78 @@ We need to export the prediction model developed in protected environments, such
 # change when 
 It is unclear when to artifical censor subjects at the prediction time horizon.
 
+
+
+
 *** Setting: competing risks
-Assume we are in a competing risks scenario and want to predict the risk of getting diagnosed with T2D and the risk of dying, at some fixed timepoint $\tau$. Denote:
+Notation
 \vfill
-- $T$ as the time between time0 and the date of an event
-- $D\in\{1,2\}$ as the cause of the event
-- $X = (X^1,...,X^p)$ as a p-dimensional vector of baseline covariates, which can both be numeric or categorical.
-\vfill
-Additionally we assume that the event time $T$ is right censored at the random time $C$, where $P(C>\tau\vert X)>0$ almost surely. Denote $\widetilde{T} = \min(T,C)$ and $\widetilde{D} = \Delta D$ as the observed time and event, where $\Delta = 1\{T\leq C\}$.
+- $T$: the time between time zero[fn:1] and the date of an event
+- $D\in\{1,2\}$: the cause of the event
+- $X = (X^1,...,X^p)$: a p-dimensional vector of baseline covariates
+- $C$: the time between time zero and censoring
+- $\widetilde{T} = \min(T,C)$: observed time
+- $\Delta = 1\{T\leq C\}$: censoring indicator
+- $\widetilde{D} = \Delta D$: observed event
+- $\tau$: prediction time horizon
+
+ 
+ \vfill
+We assume conditional independent censoring and that the probability of being censored at time \(\tau\) is bounded away from zero for all $x$. 
+# Additionally we assume that the event time $T$ is right censored at the random time $C$, where $P(C>\tau\vert X)>0$ almost surely. Denote $\widetilde{T} = \min(T,C)$ and $\widetilde{D} = \Delta D$ as the observed time and event, where $\Delta = 1\{T\leq C\}$.
+[fn:1] Any time in the life of a person
 
 
-*** The idea: fit both risks to the prediction horizon
-Let $\widetilde{F}_j(t|x) = P(\widetilde{T}\leq t, \widetilde{D} = j|x)$ and $o_{ij}(\tau) = 1(\widetilde{D}_i= j,\widetilde{T}_i\leq \tau)$
+*** The parametric Cox-exponential model
+
+For both causes $j\in\{1,2\}$ and censoring $j = 0$, specify Cox regression models with constant baseline hazards:
+#+begin_export latex
+\begin{align*}
+\lambda_j(t\mid x) &=\lambda_{0j}\exp(x^\top\boldsymbol{\beta}_j),\qquad \lambda_{0j}>0,\\
+\Lambda_j(t|x) &= \int^t_0\lambda_j(s|x)ds = t\lambda_j(t|x)
+\end{align*}
+#+end_export
+\pause
+The observed cause-specific cumulative incidence functions:
+#+begin_export latex
+\begin{align*}
+\widetilde{F}_j(t|x) &= P(\widetilde{T}\leq t, \widetilde{D} = j|x)\\
+&= \int_0^t \exp\{-\Lambda_1(s-|x)-\Lambda_2(s-|x)-\Lambda_0(s-|x)\}\Lambda_j(ds|x)
+\end{align*}
+#+end_export
+
+#  Let $\widetilde{A}(x)=\sum_{j=0}^{2}\lambda_{0j}\exp(x^\top\boldsymbol{\beta}_j)$. Then
+# \[
+# \widetilde{F}_j(\tau\mid x)=\frac{\lambda_{0j}\exp(x^\top\boldsymbol{\beta}_j)}{\widetilde{A}(x)}
+# \{1-\exp[-\tau \widetilde{A}(x)]\}.
+# \]
+
+# All parameter sets $(\boldsymbol{\beta}_0,\lambda_{00})$, $(\boldsymbol{\beta}_1,\lambda_{01})$ and $(\boldsymbol{\beta}_2,\lambda_{02})$ are
+# estimated simultaniously by minimizing the Brier score loss.
+
+
+*** Estimation of observed risks [fn:2]
+
+# Let $\widetilde{F}_j(t|x) = P(\widetilde{T}\leq t, \widetilde{D} = j|x)$
 #+begin_export latex
 \begin{block}{Brier-score loss function}
 \[
 BSE=
 \frac{1}{N}\sum_{i=1}^{N}\sum_{j=0}^{2}
-\{\widetilde{F}_j(\tau\mid X_i)-o_{ij}(\tau)\}^{2}.
+\{\widetilde{F}_j(\tau\mid X_i)-1(\widetilde{D}_i= j,\widetilde{T}_i\leq \tau)\}^{2}.
 \]
 \end{block}
 #+end_export
 \pause
 
-- One loss estimates the two cause-specific models *simultaneously*.
+- Estimating the parameters of the three Cox-exponential models by minimizing the overall Brier score yields \(\hat\Lambda_1,\hat\Lambda_2, \hat\Lambda_0\) 
+# - One loss function estimates the two cause-specific models *simultaneously*.
+- No need for IPC weights
+- Derive estimates of the absolute risks of both events \(\hat F_1, \hat F_2\) based on \(\hat\Lambda_1,\hat\Lambda_2\)
 # - $\Theta$ encodes coherence: $F_j\geq0$ and $F_0+F_1+F_2=1$.
+# Here the sum starts at $j = 0$ which is a method for handling right censoring \cite{munch}.
 
-Here the sum starts at $j = 0$ which is a method for handling right censoring \cite{munch}.
+[fn:2] Munch & Gerds (2026). The joint survival super learner: A super learner for right-censored data. Statistica Neerlandica, 80(2), e70026. 
 
 *** COMMENT Which death risk are we communicating?
 
@@ -131,29 +195,6 @@ for death regardless of diabetes status.
 
 * From framework to learner
 
-*** Focus of this talk: a single model, not prediction strategy
-# This doesnt make sense, as we then include models that can't be transfered from protected envioroments
-#+begin_export latex
-\begin{center}
-Learner library $\longrightarrow$ K-fold cross-validation
-$\longrightarrow$ Super Learner ensemble $\longrightarrow$ external validation
-\end{center}
-#+end_export
-Candidate learners can include cause-specific Cox models, direct binomial
-regression, boosting, neural networks, and constrained parametric hazard models.
-
-\pause
-\vfill
-# Ryk til top
-#+begin_export latex
-\begin{alertblock}{Focus of this talk}
-One possible library member: a Cox-exponential model estimated by minimizing the Brier-score. A single learner that ensures simultaneous, coherent, and horizon-specific estimation, not
-the entire prediction strategy.
-\end{alertblock}
-#+end_export
-
-
-
 *** COMMENT Maximum likelihood
 # this is not the full likelihood, missing censoring
 Assume we have $N$ observations of $(\widetilde{T},\widetilde{D}, X)$. Using that the survival function is a product of the individual cause-specific survival functions, $S(t_i|x_i) = \prod S_j(t_i|x_i)$, we can write the likelihood as
@@ -165,78 +206,55 @@ L = \prod_{j = 1}^2\prod_{i = 1}^N\lambda_{j}(t_i|x_i)^{d_{ij}}\exp(-\Lambda_j(t
 where $d_{ij} = 1\{\widetilde{D}_i = j\}$. \pause This means that the likelihood function is a product of 2 likelihoods, one for each cause. We can then maximize each cause-specific likelihood function seperately by choosing some parametric form for the baseline hazards.
 
 
-*** The Cox-exponential model
-
-For causes $j\in\{0,1,2\}$, assume Cox proportional hazards with constant baseline hazards:
-\[
-\lambda_j(t\mid x)=\lambda_{0j}\exp(x^\top\beta_j),\qquad \lambda_{0j}>0.
-\]
-Let $\widetilde{A}(x)=\sum_{j=0}^{2}\lambda_{0j}\exp(x^\top\beta_j)$. Then
-\[
-\widetilde{F}_j(\tau\mid x)=\frac{\lambda_{0j}\exp(x^\top\beta_j)}{\widetilde{A}(x)}
-\{1-\exp[-\tau \widetilde{A}(x)]\}.
-\]
-
-All parameter sets $(\beta_0,\lambda_{00})$, $(\beta_1,\lambda_{01})$ and $(\beta_2,\lambda_{02})$ are
-estimated simultaniously by minimizing the Brier score loss.
-
 *** Brier score estimation
-Assuming Cox-proportional hazards model and constant baseline hazards for all causes, our estimator becomes:
+# #+begin_export latex
+# \begin{align*}
+# \hat{\theta}_{BSE}=&\arg\min_{\theta}\frac{1}{N}\sum_{i=1}^{N}\sum_{j=0}^{2}\\
+# &\{\frac{\lambda_{0j}\exp(x_i^\top\boldsymbol{\beta}_j)}{\widetilde{A}(x_i)}\{1-\exp[-\tau \widetilde{A}(x_i)]\}-1(\widetilde{D}_i= j,\widetilde{T}_i\leq \tau)\}^{2}.
+# \end{align*}
+# #+end_export
+Parameter vector and the estimator:
+#+begin_export latex
+\begin{align*}
+{\theta} &= (\lambda_{00},\boldsymbol{\beta}_0,\lambda_{01},\boldsymbol{\beta}_1,\lambda_{02},\boldsymbol{\beta}_2), \\
+\hat{\theta}_{BSE}&=\arg\min_{\theta}\frac{1}{N}\sum_{i=1}^{N}\sum_{j=0}^{2}
+%\{\int_0^t \exp\{-\sum_{k = 0}^2\Lambda_k(s-|x)\}\Lambda_j(ds|x)
+\left\{\widetilde F_j(\tau|x;\theta)-1(\widetilde{D}_i= j,\widetilde{T}_i\leq \tau)\right\}^{2}.
+\end{align*}
+#+end_export
 
-#+begin_export latex
-\begin{align*}
-\hat{\theta}_{BSE}=&\arg\min_{\theta}\frac{1}{N}\sum_{i=1}^{N}\sum_{j=0}^{2}\\
-&\{\frac{\lambda_{0j}\exp(x_i^\top\beta_j)}{\widetilde{A}(x_i)}\{1-\exp[-\tau \widetilde{A}(x_i)]\}-o_{ij}(\tau)\}^{2}.
-\end{align*}
-#+end_export
 \pause \vfill
-Cause specific risk predictions can then be obtained by substituting into $F_j(\tau|x) = P(T\leq \tau, D = j|x)$. Let $\hat{A}(x)=\sum_{j=1}^{2}\hat{\lambda}_{0j}\exp(x^\top\hat{\beta}_j)$,
+Cause specific risk predictions can then be obtained by substituting $\hat \theta_{BSE}$ into:
 #+begin_export latex
 \begin{align*}
-F_j(\tau|x) = \frac{\hat{\lambda}_{0j}\exp(x^\top\hat{\beta}_j)}{\hat{A}(x)}
-\{1-\exp[-\tau \hat{A}(x)]\}, \text{ for }j\in\{1,2\}
+F_j(t|x) &= P(T\leq t, D = j|x)\\
+&= \int_0^t \exp\{-\Lambda_1(s-|x;\theta)-\Lambda_2(s-|x;\theta)\} \Lambda_j(ds|x;\theta)
 \end{align*}
 #+end_export
+
+# Let $\hat{A}(x)=\sum_{j=1}^{2}\hat{\lambda}_{0j}\exp(x^\top\hat{\boldsymbol{\beta}}_j)$,
+# #+begin_export latex
+# \begin{align*}
+# F_j(\tau|x) = \frac{\hat{\lambda}_{0j}\exp(x^\top\hat{\boldsymbol{\beta}}_j)}{\hat{A}(x)}
+# \{1-\exp[-\tau \hat{A}(x)]\}, \text{ for }j\in\{1,2\}
+# \end{align*}
+# #+end_export
 
 *** Why estimate like this?
 
-Estimating both cause-specific hazards this way:
-- targets calibration and discrimination directly at the prediction horizon;
-- performs well in non-proportional hazards data;
-- prevents impossible pairs of predictions;
-- produces a portable parametric learner for use outside protected enviroments.
-\pause
+*Working hypothesis:* 
+
+The Cox-exponential model makes sense as we only need predictions for one specific timepoint, so we don't need the baseline hazard to vary over time.
 \vfill
-Choosing a simple parametric model makes sense as we only fit the model for one specific timepoint, so we don't need the baseline hazard to vary over time.
+
+Estimating both cause-specific hazards this way:
+- targets calibration and discrimination directly at the prediction horizon
+- performs well in non-proportional hazards data
+- respects the parameter space, i.e., \(F_1 + F_2 \leq 1\)
+- produces a portable parametric learner for use outside protected enviroments.
 
 
 * The role of follow-up after five years
-
-*** Artificial censoring at the prediction horizon
-
-Artificial censoring replaces the observed follow-up by
-\[
-\widetilde T_i^{(5)}=\min(\widetilde T_i,5),\qquad
-\widetilde D_i^{(5)}=\widetilde D_i1\{\widetilde T_i\leq5\}.
-\]
-It removes all event-time information after the five-year horizon. This affects the estimates of Cox models fitted using likelihood methods.
-
-#+begin_export latex
-\begin{columns}[T]
-\begin{column}{0.47\textwidth}
-\begin{block}{It can lose predictive power}
-If proportional hazards is correct, later events inform the same $\beta_j$ that
-governs hazards before five years. Discarding them wastes information.
-\end{block}
-\end{column}
-\begin{column}{0.47\textwidth}
-\begin{block}{It can gain predictive power}
-If effects change after five years, an untruncated Cox fit compromises across
-periods and can learn the wrong effect for the five-year target.
-\end{block}
-\end{column}
-\end{columns}
-#+end_export
 
 
 *** Non-proportional hazards data
@@ -244,17 +262,57 @@ periods and can learn the wrong effect for the five-year target.
 #+RESULTS:
 [[file:non_prop_hazard_plot.pdf]]
 
-*** Simulation study
+*** Simulation study: Prediction at 4 years
+# Mention that you simulate data and then predict the risks for one set of covariates 2000 times
+# remove the CSC with artificial censoring to highlight the bad result
+#+ATTR_LATEX: :width 1\textwidth
+#+RESULTS:
+[[file:sim_study_t4_no_artcens.pdf]]
+
+*** Artificial censoring at the prediction horizon
+
+Artificial censoring replaces the observed outcome by
+\[
+\widetilde T_i^{(4)}=\min(\widetilde T_i,4),\qquad
+\widetilde D_i^{(4)}=\widetilde D_i1\{\widetilde T_i\leq4\}.
+\]
+It removes all event-time information after the four-year horizon. This affects the estimates of Cox models fitted using likelihood methods.
+
+#+begin_export latex
+\begin{columns}[T]
+\begin{column}{0.47\textwidth}
+\begin{block}{It can lose predictive power}
+If proportional hazards is correct, later events inform the same $\boldsymbol{\beta}_j$ that
+governs hazards before four years. Discarding them wastes information.
+\end{block}
+\end{column}
+\begin{column}{0.47\textwidth}
+\begin{block}{It can gain predictive power}
+If effects change after four years, an untruncated Cox fit compromises across
+periods and can learn the wrong effect for the four-year target.
+\end{block}
+\end{column}
+\end{columns}
+#+end_export
+
+*** Simulation study: Prediction at 4 years
+# same plot as before but with CSC artificial censoring added
 #+ATTR_LATEX: :width 1\textwidth
 #+RESULTS:
 [[file:sim_study_t4.pdf]]
 
-*** Simulation study
+
+# IN THE NEXT TWO SLIDES HIGHLIGHT THAT BSE TARGETS PREDICTION AT THE PREDICTION HORIZON
+*** Simulation study: Prediction at 6 years
 #+ATTR_LATEX: :width 1\textwidth
 #+RESULTS:
 [[file:sim_study_t6.pdf]]
 
-*** Simulation study
+# Before next slide say something like:
+# "Okay so when data is non-proportional hazards, artificial censoring is a good idea right?"
+# then on the next slide highlight that, now the semi-para-Cox regression is better without artificial
+# censoring the data
+*** Simulation study: Prediction at 13 years
 #+ATTR_LATEX: :width 1\textwidth
 #+RESULTS:
 [[file:sim_study_t13.pdf]]
@@ -285,17 +343,15 @@ Greenland, and the Faroe Islands.
 
 Evaluation plan:
 
-- obtain cross-validated predictions from all candidate learners;
-- compare calibration and Brier score at five years;
-- assess artificial censoring for Cox-based learners;
-- inspect performance in clinically relevant subgroups;
+- obtain cross-validated predictions from all candidate learners
+- compare calibration and Brier score at five years
+- assess artificial censoring for Cox-based learners
+- inspect performance in clinically relevant subgroups
 - validate the final Super Learner on held-out data.
 
 The constrained Cox-exponential model contributes interpretable, exportable
 predictions to this broader library.
 
-
-# REWRITE DISCUSSION 
 
 *** COMMENT Take-home message
 
@@ -314,6 +370,9 @@ cause-specific hazard models simultaneously.
 
 *** Discussion
 
-- The optimization is non-convex; initialization and repeated starts matter;\pause
-- How to handle censoring; Use IPCW or fit a model for the censoring state?\pause
+- Estimation targets prediction horizon
+# Therefore resulting model can only be used ot predict at that tau
+- The criterion function is non-convex: initialization and repeated starts matter
+ + Use partial likehood and Breslow estimates from a semi-parametric Cox regression model to find start values for hazard ratios and baseline hazard
+ + Consider to switch from Brier score to logarithmic loss
 - Need to extend framework to illness-death.

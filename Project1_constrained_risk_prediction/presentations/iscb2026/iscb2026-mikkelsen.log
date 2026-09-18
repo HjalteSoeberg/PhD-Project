@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2025.9.24)  17 SEP 2026 09:02
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2025.9.24)  18 SEP 2026 14:04
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -1089,27 +1089,31 @@ Package pdftex.def Info: risk-plane.pdf  used on input line 8.
 )
 [2
 
- <./risk-plane.pdf>] [3
-
-]
+ <./risk-plane.pdf>]
 LaTeX Font Info:    Trying to load font information for TS1+cmss on input line 
-111.
-
-(/usr/share/texlive/texmf-dist/tex/latex/base/ts1cmss.fd
+108.
+ (/usr/share/texlive/texmf-dist/tex/latex/base/ts1cmss.fd
 File: ts1cmss.fd 2023/04/13 v2.5m Standard LaTeX font definitions
-) [4
+) [3
 
-{/usr/share/texmf/fonts/enc/dvips/cm-super/cm-super-ts1.enc}]
+{/usr/share/texmf/fonts/enc/dvips/cm-super/cm-super-ts1.enc}] [4
 
-Package natbib Warning: Citation `munch' on page 5 undefined on input line 130.
-
-
-[5
+] [5
 
 ]
+LaTeX Font Info:    Font shape `OT1/cmss/b/n' in size <10.95> not available
+(Font)              Font shape `OT1/cmss/bx/n' tried instead on input line 142.
 
-Package natbib Warning: Citation `munch' on page 6 undefined on input line 130.
+LaTeX Font Info:    Font shape `OT1/cmss/b/n' in size <8> not available
+(Font)              Font shape `OT1/cmss/bx/n' tried instead on input line 142.
 
+LaTeX Font Info:    Font shape `OT1/cmss/b/n' in size <6> not available
+(Font)              Font shape `OT1/cmss/bx/n' tried instead on input line 142.
+
+
+
+LaTeX Font Warning: Font shape `T1/cmss/b/n' undefined
+(Font)              using `T1/cmss/m/n' instead on input line 142.
 
 [6
 
@@ -1125,29 +1129,35 @@ Package natbib Warning: Citation `munch' on page 6 undefined on input line 130.
 
 ] [12
 
-] [13
-
-] [14
-
 ]
-
-pdfTeX warning: pdflatex (file ./non_prop_hazard_plot.pdf): PDF inclusion: foun
-d PDF version <1.7>, but at most version <1.5> allowed
-<non_prop_hazard_plot.pdf, id=150, 722.7pt x 404.51125pt>
+<non_prop_hazard_plot.pdf, id=136, 578.16pt x 397.485pt>
 File: non_prop_hazard_plot.pdf Graphic file (type pdf)
 <use non_prop_hazard_plot.pdf>
-Package pdftex.def Info: non_prop_hazard_plot.pdf  used on input line 230.
-(pdftex.def)             Requested size: 307.28987pt x 171.99832pt.
-[15
+Package pdftex.def Info: non_prop_hazard_plot.pdf  used on input line 209.
+(pdftex.def)             Requested size: 307.28987pt x 211.26042pt.
+ [13
 
  <./non_prop_hazard_plot.pdf>]
 
+pdfTeX warning: pdflatex (file ./sim_study_t4_no_artcens.pdf): PDF inclusion: f
+ound PDF version <1.7>, but at most version <1.5> allowed
+<sim_study_t4_no_artcens.pdf, id=156, 1373.13pt x 960.58875pt>
+File: sim_study_t4_no_artcens.pdf Graphic file (type pdf)
+<use sim_study_t4_no_artcens.pdf>
+Package pdftex.def Info: sim_study_t4_no_artcens.pdf  used on input line 215.
+(pdftex.def)             Requested size: 307.28987pt x 214.96521pt.
+[14
+
+ <./sim_study_t4_no_artcens.pdf>] [15
+
+]
+
 pdfTeX warning: pdflatex (file ./sim_study_t4.pdf): PDF inclusion: found PDF ve
 rsion <1.7>, but at most version <1.5> allowed
-<sim_study_t4.pdf, id=187, 1373.13pt x 960.58875pt>
+<sim_study_t4.pdf, id=185, 1373.13pt x 960.58875pt>
 File: sim_study_t4.pdf Graphic file (type pdf)
 <use sim_study_t4.pdf>
-Package pdftex.def Info: sim_study_t4.pdf  used on input line 236.
+Package pdftex.def Info: sim_study_t4.pdf  used on input line 245.
 (pdftex.def)             Requested size: 307.28987pt x 214.96521pt.
 [16
 
@@ -1155,10 +1165,10 @@ Package pdftex.def Info: sim_study_t4.pdf  used on input line 236.
 
 pdfTeX warning: pdflatex (file ./sim_study_t6.pdf): PDF inclusion: found PDF ve
 rsion <1.7>, but at most version <1.5> allowed
-<sim_study_t6.pdf, id=216, 1373.13pt x 960.58875pt>
+<sim_study_t6.pdf, id=214, 1373.13pt x 960.58875pt>
 File: sim_study_t6.pdf Graphic file (type pdf)
 <use sim_study_t6.pdf>
-Package pdftex.def Info: sim_study_t6.pdf  used on input line 242.
+Package pdftex.def Info: sim_study_t6.pdf  used on input line 250.
 (pdftex.def)             Requested size: 307.28987pt x 214.96521pt.
 [17
 
@@ -1166,18 +1176,14 @@ Package pdftex.def Info: sim_study_t6.pdf  used on input line 242.
 
 pdfTeX warning: pdflatex (file ./sim_study_t13.pdf): PDF inclusion: found PDF v
 ersion <1.7>, but at most version <1.5> allowed
-<sim_study_t13.pdf, id=245, 1373.13pt x 960.58875pt>
+<sim_study_t13.pdf, id=243, 1373.13pt x 960.58875pt>
 File: sim_study_t13.pdf Graphic file (type pdf)
 <use sim_study_t13.pdf>
-Package pdftex.def Info: sim_study_t13.pdf  used on input line 248.
+Package pdftex.def Info: sim_study_t13.pdf  used on input line 255.
 (pdftex.def)             Requested size: 307.28987pt x 214.96521pt.
 [18
 
  <./sim_study_t13.pdf>] [19
-
-] [20
-
-] [21
 
 ]
 \tf@nav=\write7
@@ -1189,47 +1195,48 @@ Package pdftex.def Info: sim_study_t13.pdf  used on input line 248.
 \tf@snm=\write9
 \openout9 = `iscb2026-mikkelsen.snm'.
 
-
-
-Package natbib Warning: There were undefined citations.
-
-(./iscb2026-mikkelsen.aux)
+ (./iscb2026-mikkelsen.aux)
  ***********
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-01-22>
  ***********
 
 
+LaTeX Font Warning: Some font shapes were not available, defaults substituted.
+
+
 LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
 
 Package rerunfilecheck Info: File `iscb2026-mikkelsen.out' has not changed.
-(rerunfilecheck)             Checksum: 2FAA6FDB68C9D75D2103FB68C2945767;847.
+(rerunfilecheck)             Checksum: A6C42139AF6A4D000F8C6B55851AB6BE;842.
  ) 
 Here is how much of TeX's memory you used:
- 27379 strings out of 476106
- 529627 string characters out of 5793933
- 1934975 words of memory out of 5000000
- 48767 multiletter control sequences out of 15000+600000
- 570056 words of font info for 67 fonts, out of 8000000 for 9000
+ 27473 strings out of 476106
+ 531355 string characters out of 5793933
+ 1933975 words of memory out of 5000000
+ 48846 multiletter control sequences out of 15000+600000
+ 584949 words of font info for 110 fonts, out of 8000000 for 9000
  59 hyphenation exceptions out of 8191
- 128i,12n,123p,436b,598s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 128i,13n,123p,436b,645s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></us
 r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/shar
 e/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/share/texli
-ve/texmf-dist/fonts/type1/public/amsfonts/cm/cmss10.pfb></usr/share/texlive/tex
-mf-dist/fonts/type1/public/amsfonts/cm/cmss8.pfb></usr/share/texlive/texmf-dist
-/fonts/type1/public/amsfonts/cm/cmssi10.pfb></usr/share/texlive/texmf-dist/font
-s/type1/public/amsfonts/cm/cmssi8.pfb></usr/share/texlive/texmf-dist/fonts/type
-1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/publ
-ic/amsfonts/cm/cmsy8.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfss0600
-.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfss0800.pfb></usr/share/tex
-mf/fonts/type1/public/cm-super/sfss1095.pfb></usr/share/texmf/fonts/type1/publi
-c/cm-super/sfss1200.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfss1440.
-pfb></usr/share/texmf/fonts/type1/public/cm-super/sfsx1095.pfb>
-Output written on iscb2026-mikkelsen.pdf (21 pages, 274315 bytes).
+ve/texmf-dist/fonts/type1/public/amsfonts/cm/cmmib10.pfb></usr/share/texlive/te
+xmf-dist/fonts/type1/public/amsfonts/cm/cmss10.pfb></usr/share/texlive/texmf-di
+st/fonts/type1/public/amsfonts/cm/cmss8.pfb></usr/share/texlive/texmf-dist/font
+s/type1/public/amsfonts/cm/cmssi10.pfb></usr/share/texlive/texmf-dist/fonts/typ
+e1/public/amsfonts/cm/cmssi8.pfb></usr/share/texlive/texmf-dist/fonts/type1/pub
+lic/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/am
+sfonts/cm/cmsy8.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfss0600.pfb>
+</usr/share/texmf/fonts/type1/public/cm-super/sfss0800.pfb></usr/share/texmf/fo
+nts/type1/public/cm-super/sfss0900.pfb></usr/share/texmf/fonts/type1/public/cm-
+super/sfss1000.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfss1095.pfb><
+/usr/share/texmf/fonts/type1/public/cm-super/sfss1200.pfb></usr/share/texmf/fon
+ts/type1/public/cm-super/sfss1440.pfb>
+Output written on iscb2026-mikkelsen.pdf (19 pages, 319307 bytes).
 PDF statistics:
- 384 PDF objects out of 1000 (max. 8388607)
- 289 compressed objects within 3 object streams
- 85 named destinations out of 1000 (max. 500000)
- 100 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 377 PDF objects out of 1000 (max. 8388607)
+ 282 compressed objects within 3 object streams
+ 79 named destinations out of 1000 (max. 500000)
+ 105 words of extra memory for PDF output out of 10000 (max. 10000000)
 
